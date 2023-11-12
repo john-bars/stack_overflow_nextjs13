@@ -14,8 +14,14 @@ export default function Home() {
         </Link>
       </div>
 
-      <div className="flex-between mt-11 flex-col gap-5">
-        <LocalSearchbar />
+      <div className="flex-between mt-11 gap-5 max-sm:flex-col">
+        <LocalSearchbar
+          route="/"
+          iconPosition="left"
+          imgSrc="/assets/icons/search.svg"
+          placeholder="Search for questions..."
+          otherClasses="flex-1"
+        />
         <div>Filters</div>
       </div>
     </>
