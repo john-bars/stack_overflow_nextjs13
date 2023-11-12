@@ -1,3 +1,4 @@
+import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -13,9 +14,9 @@ export default function Home() {
         </Link>
       </div>
 
-      <div className="flex-between mt-11 gap-5 max-sm:flex-col">
-        <form action="">LocalSearchbar</form>
-        <form action="">Filters</form>
+      <div className="flex-between mt-11 flex-col gap-5">
+        <LocalSearchbar />
+        <div>Filters</div>
       </div>
     </>
   );
