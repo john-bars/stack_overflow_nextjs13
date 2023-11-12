@@ -19,11 +19,11 @@ const RightSidebar = () => {
   ];
 
   const popularTags = [
-    { _id: 1, name: "NEXTJS", totalQuestions: 19 },
-    { _id: 1, name: "TEST", totalQuestions: 14 },
-    { _id: 1, name: "REACT", totalQuestions: 13 },
-    { _id: 1, name: "CSS", totalQuestions: 8 },
-    { _id: 1, name: "NEXT JS", totalQuestions: 7 },
+    { _id: 1, name: "NextJS", totalQuestions: 19 },
+    { _id: 2, name: "Test", totalQuestions: 14 },
+    { _id: 3, name: "React", totalQuestions: 13 },
+    { _id: 4, name: "CSS", totalQuestions: 8 },
+    { _id: 5, name: "Next JS", totalQuestions: 7 },
   ];
 
   return (
@@ -33,7 +33,7 @@ const RightSidebar = () => {
         <div className="mt-7 flex w-full flex-col gap-7">
           {hotQuestions.map((question) => (
             <Link
-              href="/"
+              href={`/questions/${question._id}`}
               key={question._id}
               className="flex-between cursor-pointer gap-7"
             >
