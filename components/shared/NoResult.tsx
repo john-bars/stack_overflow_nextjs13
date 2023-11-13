@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -12,7 +13,7 @@ interface NoResultProps {
 
 const NoResult = ({ title, description, link, linkTitle }: NoResultProps) => {
   return (
-    <div className="flex-center mt-10 flex w-full flex-col">
+    <div className="flex-center mt-10 w-full flex-col">
       {/* Image for light mode */}
       <Image
         src="/assets/images/light-illustration.png"
