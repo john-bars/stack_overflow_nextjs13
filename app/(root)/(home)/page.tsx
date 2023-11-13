@@ -1,3 +1,4 @@
+import QuestionCard from "@/components/cards/QuestionCard";
 import HomeFilters from "@/components/home/HomeFilters";
 import Filter from "@/components/shared/Filter";
 import NoResult from "@/components/shared/NoResult";
@@ -6,32 +7,35 @@ import { Button } from "@/components/ui/button";
 import { HomePageFilters } from "@/constants/filters";
 import Link from "next/link";
 
-const questions: [] = [
-  // {
-  //   _id: "1",
-  //   title:
-  //     "Best practices for data fetching in a Next.js application with Server-Side Rendering (SSR)?",
-  //   tags: [{ _id: "1", name: "next.js" }],
-  //   author: "Sujata",
-  //   upvotes: 55,
-  //   answers: 32,
-  //   views: 2800,
-  //   createdAt: new Date("2023-11-13T12:00:00.000Z"),
-  // },
-  // {
-  //   _id: "2",
-  //   title: "How do I use express as a custom server in NextJS?",
-  //   tags: [
-  //     { _id: "2", name: "next13" },
-  //     { _id: "3", name: "express" },
-  //     { _id: "4", name: "fastify" },
-  //   ],
-  //   author: "Brandon",
-  //   upvotes: 2,
-  //   answers: 3,
-  //   views: 368,
-  //   createdAt: new Date("2023-11-13T13:00:00.000Z"),
-  // },
+const questions = [
+  {
+    _id: "1",
+    title:
+      "Best practices for data fetching in a Next.js application with Server-Side Rendering (SSR)?",
+    tags: [{ _id: "1", name: "next.js" }],
+    author: { _id: "101", name: "Sujata", picture: "/path/to/sujata.jpg" },
+    upvotes: 55,
+    answers: [{ answerId: "A1", text: "Some answer text" }],
+    views: 2800,
+    createdAt: new Date("2023-11-13T12:00:00.000Z"),
+  },
+  {
+    _id: "2",
+    title: "How do I use express as a custom server in NextJS?",
+    tags: [
+      { _id: "2", name: "next13" },
+      { _id: "3", name: "express" },
+      { _id: "4", name: "fastify" },
+    ],
+    author: { _id: "102", name: "Brandon", picture: "/path/to/brandon.jpg" },
+    upvotes: 2,
+    answers: [
+      { answerId: "A2", text: "Express can be used as follows..." },
+      { answerId: "A3", text: "Another answer here." },
+    ],
+    views: 368,
+    createdAt: new Date("2023-11-13T13:00:00.000Z"),
+  },
 ];
 
 export default function Home() {
@@ -67,7 +71,17 @@ export default function Home() {
       <div className="mt-10 flex w-full flex-col gap-6">
         {questions.length > 0 ? (
           questions.map((question) => (
-            <div key={question._id}>QuestionCard</div>
+            <QuestionCard
+              key={question._id}
+              _id={question._id}
+              title={question.title}
+              tags={question.tags}
+              author={question.author}
+              upvotes={question.upvotes}
+              views={question.views}
+              answers={question.answers}
+              createdAt={question.createdAt}
+            />
           ))
         ) : (
           <NoResult
