@@ -1,5 +1,8 @@
 "use client";
 
+import React, { useRef } from "react";
+import { Editor } from "@tinymce/tinymce-react";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -16,13 +19,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { questionsSchema } from "@/lib/validation";
 
-// const formSchema = z.object({
-//   username: z.string().min(2, {
-//     message: "Username must be at least 2 characters.",
-//   }),
-// });
-
 export function Question() {
+  const editorRef = useRef(null);
+
   // 1. Define your form.
   const form = useForm<z.infer<typeof questionsSchema>>({
     resolver: zodResolver(questionsSchema),
@@ -35,9 +34,7 @@ export function Question() {
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof questionsSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+    // console.log(values);
   }
 
   return (
@@ -78,7 +75,39 @@ export function Question() {
                 <span className="text-primary-500">*</span>
               </FormLabel>
               <FormControl className="mt-3.5">
-                {/* TODO: Add an Editor component */}
+                {/* Editor component */}
+                <Editor
+                  apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_API_KEY}
+                  onInit={(evt, editor) =>
+                    // @ts-ignore
+                    (editorRef.current = editor)
+                  }
+                  initialValue=""
+                  init={{
+                    height: 350,
+                    menubar: false,
+                    plugins: [
+                      "advlist",
+                      "autolink",
+                      "lists",
+                      "link",
+                      "image",
+                      "charmap",
+                      "preview",
+                      "anchor",
+                      "searchreplace",
+                      "visualblocks",
+                      "codesample",
+                      "fullscreen",
+                      "insertdatetime",
+                      "media",
+                      "table",
+                    ],
+                    toolbar: `undo redo | styles | codesample | bold italic forecolor | alignleft aligncenter | alignright alignjustify | bullist numlist`,
+                    content_style:
+                      "body { font-family: Inter; font-size: 16px }",
+                  }}
+                />
               </FormControl>
               <FormDescription className="body-regular mt-2.5 text-light-500">
                 Introduce the problem and expand on what you put in the title.
