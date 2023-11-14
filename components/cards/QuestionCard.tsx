@@ -3,6 +3,7 @@ import Link from "next/link";
 import React from "react";
 import RenderTag from "../shared/RenderTag";
 import Metric from "../shared/Metric";
+import { formatNumberWithExtension, getTimestamp } from "@/lib/utils";
 
 interface Answer {
   answerId: string;
@@ -36,7 +37,7 @@ const QuestionCard = ({
         <div>
           {/* Only visible for mobile devices */}
           <span className="subtle-regular text-dark400_light700 line-clamp-1 flex sm:hidden">
-            {String(createdAt)}
+            {getTimestamp(createdAt)}
           </span>
 
           {/* title */}
@@ -61,32 +62,34 @@ const QuestionCard = ({
           imgUrl="/assets/icons/avatar.svg"
           alt="user"
           value={author.name}
-          title=" - asked 1 hour ago"
+          title={` - asked ${getTimestamp(createdAt)}`}
           href={`/profile/${author._id}`}
           isAuthor
           textStyles="body-medium text-dark400_light700"
         />
-        <Metric
-          imgUrl="/assets/icons/like.svg"
-          alt="Upvotes"
-          value={upvotes}
-          title="Votes"
-          textStyles="small-medium text-dark400_light800"
-        />
-        <Metric
-          imgUrl="/assets/icons/message.svg"
-          alt="message"
-          value={answers.length}
-          title=" Answers"
-          textStyles="small-medium text-dark400_light800"
-        />
-        <Metric
-          imgUrl="/assets/icons/eye.svg"
-          alt="eye"
-          value={views}
-          title=" Views"
-          textStyles="small-medium text-dark400_light800"
-        />
+        <div className="flex-between gap-3">
+          <Metric
+            imgUrl="/assets/icons/like.svg"
+            alt="Upvotes"
+            value={formatNumberWithExtension(upvotes)}
+            title="Votes"
+            textStyles="small-medium text-dark400_light800"
+          />
+          <Metric
+            imgUrl="/assets/icons/message.svg"
+            alt="message"
+            value={formatNumberWithExtension(answers.length)}
+            title=" Answers"
+            textStyles="small-medium text-dark400_light800"
+          />
+          <Metric
+            imgUrl="/assets/icons/eye.svg"
+            alt="eye"
+            value={formatNumberWithExtension(views)}
+            title=" Views"
+            textStyles="small-medium text-dark400_light800"
+          />
+        </div>
       </div>
     </div>
   );
