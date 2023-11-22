@@ -20,12 +20,19 @@ import { Input } from "@/components/ui/input";
 import { questionsSchema } from "@/lib/validation";
 import { Badge } from "../ui/badge";
 import Image from "next/image";
+import { createQuestion } from "@/lib/actions/question.action";
+import { usePathname, useRouter } from "next/navigation";
 
 const type: any = "create";
+interface Props {
+  mongoUserId: string;
+}
 
-export function Question() {
+export function Question({ mongoUserId }: Props) {
   const editorRef = useRef(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
 
   // 1. Define your form
   const form = useForm<z.infer<typeof questionsSchema>>({
@@ -38,13 +45,20 @@ export function Question() {
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof questionsSchema>) {
+  async function onSubmit(values: z.infer<typeof questionsSchema>) {
     setIsSubmitting(true);
 
     try {
       // make an async call to the API to create a question
       // contain all form data
-      // navitgate to home page
+      await createQuestion({
+        title: values.title,
+        content: values.explanation,
+        tags: values.tags,
+        author: JSON.parse(mongoUserId),
+      });
+      // navigate to home page
+      router.push("/");
     } catch (error) {
     } finally {
       setIsSubmitting(false);
@@ -133,6 +147,8 @@ export function Question() {
                     // @ts-ignore
                     (editorRef.current = editor)
                   }
+                  onBlur={field.onBlur}
+                  onEditorChange={(content) => field.onChange(content)}
                   initialValue=""
                   init={{
                     height: 350,
