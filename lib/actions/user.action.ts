@@ -1,12 +1,12 @@
 "use server";
 
 import User from "@/database/user.model";
-import { connecteToDatabase } from "../mongoose";
+import { connectToDatabase } from "../mongoose";
 
 // get the user with a clerkId equall to userId
 export async function getUserById(params: any) {
   try {
-    connecteToDatabase();
+    connectToDatabase();
     const { userId } = params;
 
     const user = await User.findOne({ clerkId: userId });

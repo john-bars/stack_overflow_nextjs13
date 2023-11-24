@@ -1,12 +1,12 @@
 "use server";
 
 import Question from "@/database/question.model";
-import { connecteToDatabase } from "../mongoose";
+import { connectToDatabase } from "../mongoose";
 import Tag from "@/database/tag.model";
 
 export async function createQuestion(params: any) {
   try {
-    connecteToDatabase();
+    connectToDatabase();
 
     const { title, content, tags, author, path } = params;
 
