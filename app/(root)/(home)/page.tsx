@@ -5,40 +5,12 @@ import NoResult from "@/components/shared/NoResult";
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
 import { Button } from "@/components/ui/button";
 import { HomePageFilters } from "@/constants/filters";
+import { getQuestions } from "@/lib/actions/question.action";
 import Link from "next/link";
 
-const questions = [
-  {
-    _id: "1",
-    title:
-      "Best practices for data fetching in a Next.js application with Server-Side Rendering (SSR)?",
-    tags: [{ _id: "1", name: "next.js" }],
-    author: { _id: "101", name: "Sujata", picture: "/path/to/sujata.jpg" },
-    upvotes: 55,
-    answers: [{ answerId: "A1", text: "Some answer text" }],
-    views: 2800,
-    createdAt: new Date("2023-11-13T12:00:00.000Z"),
-  },
-  {
-    _id: "2",
-    title: "How do I use express as a custom server in NextJS?",
-    tags: [
-      { _id: "2", name: "next13" },
-      { _id: "3", name: "express" },
-      { _id: "4", name: "fastify" },
-    ],
-    author: { _id: "102", name: "Brandon", picture: "/path/to/brandon.jpg" },
-    upvotes: 2,
-    answers: [
-      { answerId: "A2", text: "Express can be used as follows..." },
-      { answerId: "A3", text: "Another answer here." },
-    ],
-    views: 368,
-    createdAt: new Date("2023-11-13T13:00:00.000Z"),
-  },
-];
-
-export default function Home() {
+export default async function Home() {
+  const result = await getQuestions({});
+  console.log("RESULT: ", result);
   return (
     <>
       <div className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
@@ -69,8 +41,8 @@ export default function Home() {
       <HomeFilters />
 
       <div className="mt-10 flex w-full flex-col gap-6">
-        {questions.length > 0 ? (
-          questions.map((question) => (
+        {result.questions.length > 0 ? (
+          result.questions.map((question) => (
             <QuestionCard
               key={question._id}
               _id={question._id}
@@ -89,7 +61,7 @@ export default function Home() {
             description="Be the first to break the silence! Ask a Question and kickstart the
             discussion. Our query could be the next big thing others learn from. Get
             involved!"
-            link="/"
+            link="/ask-question"
             linkTitle="Ask a Question"
           />
         )}

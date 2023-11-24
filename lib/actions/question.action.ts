@@ -3,7 +3,26 @@
 import Question from "@/database/question.model";
 import { connectToDatabase } from "../mongoose";
 import Tag from "@/database/tag.model";
+import { GetQuestionsParams } from "./shared.types";
+import User from "@/database/user.model";
 
+// GET QUESTIONS
+export async function getQuestions(params: GetQuestionsParams) {
+  try {
+    connectToDatabase();
+
+    const questions = await Question.find({}) // get all the questions
+      .populate({ path: "tags", model: Tag }) // include the tags
+      .populate({ path: "author", model: User }); // include the author
+
+    return { questions };
+  } catch (error) {
+    console.error("Error in getQuestions:", error);
+    throw new Error("Failed to retrieve questions.");
+  }
+}
+
+// CREATE QUESTION
 export async function createQuestion(params: any) {
   try {
     connectToDatabase();
@@ -38,5 +57,8 @@ export async function createQuestion(params: any) {
     // Create an interaction record for the user's ask_question action
 
     // Increment author's reputation by +5 for createing a question.
-  } catch (error) {}
+  } catch (error) {
+    console.error("Error in createQuestion: ", error);
+    throw new Error("Failed to create question.");
+  }
 }
