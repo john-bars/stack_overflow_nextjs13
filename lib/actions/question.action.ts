@@ -3,8 +3,9 @@
 import Question from "@/database/question.model";
 import { connectToDatabase } from "../mongoose";
 import Tag from "@/database/tag.model";
-import { GetQuestionsParams } from "./shared.types";
+import { CreateQuestionParams, GetQuestionsParams } from "./shared.types";
 import User from "@/database/user.model";
+import { revalidatePath } from "next/cache";
 
 // GET QUESTIONS
 export async function getQuestions(params: GetQuestionsParams) {
@@ -23,9 +24,9 @@ export async function getQuestions(params: GetQuestionsParams) {
 }
 
 // CREATE QUESTION
-export async function createQuestion(params: any) {
+export async function createQuestion(params: CreateQuestionParams) {
   try {
-    connectToDatabase();
+    connectToDatabase(); // access the database
 
     const { title, content, tags, author, path } = params;
 
@@ -57,8 +58,10 @@ export async function createQuestion(params: any) {
     // Create an interaction record for the user's ask_question action
 
     // Increment author's reputation by +5 for createing a question.
+
+    revalidatePath(path);
   } catch (error) {
     console.error("Error in createQuestion: ", error);
-    throw new Error("Failed to create question.");
+    throw new Error("Failed to create a question.");
   }
 }

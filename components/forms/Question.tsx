@@ -56,6 +56,7 @@ export function Question({ mongoUserId }: Props) {
         content: values.explanation,
         tags: values.tags,
         author: JSON.parse(mongoUserId),
+        path: pathname,
       });
       // navigate to home page
       router.push("/");
