@@ -1,6 +1,7 @@
 import React from "react";
 import { ClerkProvider } from "@clerk/nextjs";
-import { Inter, Space_Grotesk as spaceGrotes } from "next/font/google";
+// eslint-disable-next-line camelcase
+import { Inter, Space_Grotesk } from "next/font/google";
 import type { Metadata } from "next";
 
 import "./globals.css";
@@ -12,7 +13,7 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-const spaceGrotesk = spaceGrotes({
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   variable: "--font-spaceGrotesk",
