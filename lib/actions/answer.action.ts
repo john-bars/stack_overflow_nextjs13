@@ -29,4 +29,20 @@ export async function createAnswer(params: CreateAnswerParams) {
   }
 }
 
-export async function getAnswer(params: GetAnswersParams) {}
+// GET THE ALL THE ANSWERS IN A QUESTION
+export async function getAnswers(params: GetAnswersParams) {
+  try {
+    connectToDatabase();
+    const { questionId } = params;
+
+    // Find answers in the database based on the question id
+    const answers = await Answer.find({ question: questionId })
+      .populate("author", "_id clerkId name picture") // populate the 'author' field with additional data
+      .sort({ createdAt: -1 }); // (newest first)
+
+    return { answers };
+  } catch (error) {
+    console.log("Error in getAnswers", error);
+    throw new Error("Failed to get the answers in the database");
+  }
+}
