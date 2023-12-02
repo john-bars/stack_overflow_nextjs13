@@ -1,11 +1,16 @@
 "use client";
 
+import {
+  downvoteQuestion,
+  upvoteQuestion,
+} from "@/lib/actions/question.action";
 import { formatNumberWithExtension } from "@/lib/utils";
 
 import Image from "next/image";
+import { usePathname, useRouter } from "next/navigation";
 
 interface Props {
-  types: string;
+  type: string;
   itemId: string;
   userId: string;
   upvotes: number;
@@ -16,7 +21,7 @@ interface Props {
 }
 
 const Votes = ({
-  types,
+  type,
   itemId,
   userId,
   upvotes,
@@ -25,9 +30,39 @@ const Votes = ({
   hasdownVoted,
   hasSaved,
 }: Props) => {
+  const pathname = usePathname();
+  const router = useRouter();
   const handleSave = () => {};
 
-  const handleVote = (action: string) => {};
+  const handleVote = async (action: string) => {
+    const voteData = {
+      questionId: JSON.parse(itemId),
+      userId: JSON.parse(userId),
+      hasupVoted,
+      hasdownVoted,
+      path: pathname,
+    };
+
+    if (!userId) {
+      return;
+    }
+
+    if (action === "upvote") {
+      if (type === "Question") {
+        await upvoteQuestion(voteData);
+      } else if (type === "Answer") {
+        // await upvoteAnswer(voteData)
+      }
+    } else if (action === "downvote") {
+      if (type === "Question") {
+        await downvoteQuestion(voteData);
+      } else if (type === "Answer") {
+        // await downvoteAnswer(voteData)
+      }
+    }
+
+    // todo: show a toast
+  };
 
   return (
     <div className="flex gap-5">
