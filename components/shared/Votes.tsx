@@ -1,5 +1,6 @@
 "use client";
 
+import { downvoteAnswer, upvoteAnswer } from "@/lib/actions/answer.action";
 import {
   downvoteQuestion,
   upvoteQuestion,
@@ -37,6 +38,7 @@ const Votes = ({
   const handleVote = async (action: string) => {
     const voteData = {
       questionId: JSON.parse(itemId),
+      answerId: JSON.parse(itemId),
       userId: JSON.parse(userId),
       hasupVoted,
       hasdownVoted,
@@ -47,21 +49,25 @@ const Votes = ({
       return;
     }
 
+    // Call the server action for upvote
     if (action === "upvote") {
       if (type === "Question") {
         await upvoteQuestion(voteData);
       } else if (type === "Answer") {
-        // await upvoteAnswer(voteData)
+        await upvoteAnswer(voteData);
       }
-    } else if (action === "downvote") {
+      // todo: show a toast
+    }
+
+    // Call the server action for downvote
+    if (action === "downvote") {
       if (type === "Question") {
         await downvoteQuestion(voteData);
       } else if (type === "Answer") {
-        // await downvoteAnswer(voteData)
+        await downvoteAnswer(voteData);
       }
+      // todo: show a toast
     }
-
-    // todo: show a toast
   };
 
   return (
@@ -110,18 +116,20 @@ const Votes = ({
         </div>
       </div>
 
-      <Image
-        src={
-          hasSaved
-            ? "/assets/icons/star-filled.svg"
-            : "/assets/icons/star-red.svg"
-        }
-        alt="star"
-        width={18}
-        height={18}
-        onClick={() => {}}
-        className="cursor-pointer"
-      />
+      {type === "Question" && (
+        <Image
+          src={
+            hasSaved
+              ? "/assets/icons/star-filled.svg"
+              : "/assets/icons/star-red.svg"
+          }
+          alt="star"
+          width={18}
+          height={18}
+          onClick={() => handleSave()}
+          className="cursor-pointer"
+        />
+      )}
     </div>
   );
 };

@@ -13,9 +13,6 @@ import Link from "next/link";
 
 const Page = async ({ params, searchParams }) => {
   const result = await getQuestionById({ questionId: params.id });
-  console.log(result);
-  // console.log(params);
-  // console.log(searchParams);
 
   const { userId } = auth();
   // console.log("clerkId: ", userId);
@@ -100,7 +97,7 @@ const Page = async ({ params, searchParams }) => {
 
       <AllAnswers
         questionId={result._id}
-        userId={JSON.stringify(mongoUser._id)}
+        userId={mongoUser._id}
         totalAnswers={result.answers.length}
       />
 
