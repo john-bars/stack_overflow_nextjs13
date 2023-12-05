@@ -5,6 +5,7 @@ import {
   downvoteQuestion,
   upvoteQuestion,
 } from "@/lib/actions/question.action";
+import { toggleSaveQuestion } from "@/lib/actions/user.action";
 import { formatNumberWithExtension } from "@/lib/utils";
 
 import Image from "next/image";
@@ -32,8 +33,15 @@ const Votes = ({
   hasSaved,
 }: Props) => {
   const pathname = usePathname();
-  const router = useRouter();
-  const handleSave = () => {};
+  // const router = useRouter();
+
+  const handleSave = async () => {
+    await toggleSaveQuestion({
+      userId: JSON.parse(userId),
+      questionId: JSON.parse(itemId),
+      path: pathname,
+    });
+  };
 
   const handleVote = async (action: string) => {
     const voteData = {
@@ -126,7 +134,7 @@ const Votes = ({
           alt="star"
           width={18}
           height={18}
-          onClick={() => handleSave()}
+          onClick={handleSave}
           className="cursor-pointer"
         />
       )}

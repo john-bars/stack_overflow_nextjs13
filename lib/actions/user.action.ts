@@ -6,6 +6,7 @@ import {
   CreateUserParams,
   DeleteUserParams,
   GetAllUsersParams,
+  ToggleSaveQuestionParams,
   UpdateUserParams,
 } from "./shared.types";
 import { revalidatePath } from "next/cache";
@@ -95,8 +96,49 @@ export async function getAllUsers(params: GetAllUsersParams) {
       .sort({ createdAt: 1 }); // show the new ones at the top
     return { users };
   } catch (error) {
-    console.log(error);
-    throw error;
+    console.log("Error in getAllUsers", error);
+    throw new Error("Failed to get all the users");
+  }
+}
+
+// TOGGLE SAVE QUESTION
+export async function toggleSaveQuestion(params: ToggleSaveQuestionParams) {
+  try {
+    connectToDatabase();
+
+    const { userId, questionId, path } = params;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Check if the question is already been saved
+    const isQuestionSaved = user.saved.includes(questionId);
+
+    if (isQuestionSaved) {
+      // remove the question from saved[]
+      await User.findByIdAndUpdate(
+        userId,
+        {
+          $pull: { saved: questionId },
+        },
+        { new: true } // return the new/latest value
+      );
+    } else {
+      // add the question to saved[]
+      await User.findByIdAndUpdate(
+        userId,
+        { $addToSet: { saved: questionId } },
+        { new: true }
+      );
+    }
+
+    revalidatePath(path);
+  } catch (error) {
+    console.log("Error in toggleSaveQuestion: ", error);
+    throw new Error("Failed to toggle save the question");
   }
 }
 
