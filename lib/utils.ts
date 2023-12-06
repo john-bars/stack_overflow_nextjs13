@@ -40,3 +40,14 @@ export const formatNumberWithExtension = (number: number): string => {
     return number.toString();
   }
 };
+
+export const getJoinedDate = (inputDate: Date): string => {
+  // Get the month and year from the Date object
+  const month = inputDate.toLocaleString("default", { month: "long" });
+  const year = inputDate.getFullYear();
+
+  // Create a string with the joined date format
+  const joinedDate = `${month} ${year}`;
+
+  return joinedDate;
+};
