@@ -208,6 +208,7 @@ export async function getUserInfo(params: GetUserByIdParams) {
   }
 }
 
+// GET THE QUESTION THE USER HAS CREATED
 export async function getUserQuestions(params: GetUserStatsParams) {
   try {
     connectToDatabase();
@@ -228,6 +229,23 @@ export async function getUserQuestions(params: GetUserStatsParams) {
   }
 }
 
+// GET THE ANSWERS THE USER HAS MADE
+export async function getUserAnswers(params: GetUserStatsParams) {
+  try {
+    connectToDatabase();
+    const { userId, page = 1, pageSize = 10 } = params;
+    const totalAnswers = await Answer.countDocuments({ author: userId });
+    const userAnswers = await Answer.find({ author: userId })
+      .sort({ upvotes: -1 })
+      .populate("question", "_id title")
+      .populate("author", "_id clerkId name picture");
+
+    return { totalAnswers, answers: userAnswers };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
 // export async function getAllUsers(params: GetAllUsersParams) {
 //   try {
 //     connectToDatabase();
