@@ -32,7 +32,7 @@ export default async function Home() {
 
       <div className="mt-10 flex w-full flex-col gap-6">
         {result.questions.length > 0 ? (
-          result.questions.map((question) => (
+          result.questions.map((question: any) => (
             <QuestionCard
               key={question._id}
               _id={question._id}
@@ -48,7 +48,7 @@ export default async function Home() {
         ) : (
           <NoResult
             title="There's no saved question to show"
-            description="Be the first to break the silence! Ask a Question and kickstart the
+            description="Be the first to break the silence! 🚀   Ask a Question and kickstart the
             discussion. Our query could be the next big thing others learn from. Get
             involved!"
             link="/ask-question"

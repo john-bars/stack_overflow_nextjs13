@@ -5,6 +5,10 @@
  * @author Ayush Saini <@AyushCodes on Twitter>
  */
 
+:not(pre):not(code) {
+  @apply text-dark-400 dark:text-light-700;
+}
+
 code[class*="language-"],
 pre[class*="language-"] {
   color: #d6e7ff;
