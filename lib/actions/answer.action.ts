@@ -5,10 +5,12 @@ import { connectToDatabase } from "../mongoose";
 import {
   AnswerVoteParams,
   CreateAnswerParams,
+  DeleteAnswerParams,
   GetAnswersParams,
 } from "./shared.types";
 import Question from "@/database/question.model";
 import { revalidatePath } from "next/cache";
+import Interaction from "@/database/interaction.model";
 
 // CREATE AN ANSWER
 export async function createAnswer(params: CreateAnswerParams) {
@@ -120,5 +122,35 @@ export async function downvoteAnswer(params: AnswerVoteParams) {
   } catch (error) {
     console.log("Error in downvoteAnswer: ", error);
     throw new Error("Failed to downvote an answer");
+  }
+}
+
+// DELETE AN ANSWER
+export async function deleteAnswer(params: DeleteAnswerParams) {
+  try {
+    connectToDatabase();
+    const { answerId, path } = params;
+
+    // Find the answer
+    const answer = await Answer.findById(answerId);
+
+    if (!answer) {
+      throw new Error("Answer not found");
+    }
+
+    // delete the answer
+    await answer.deleteOne({ _id: answerId });
+
+    // Update all the questions with an _id matching the question id in the answer by removing the corresponding answerId from the answers array.
+    await Question.updateMany(
+      { _id: answer.question },
+      { $pull: { answers: answerId } }
+    );
+    await Interaction.deleteMany({ answer: answerId });
+
+    revalidatePath(path);
+  } catch (error) {
+    console.log("Error in deleteAnswer: ", error);
+    throw new Error("Failed to delete the Answer");
   }
 }

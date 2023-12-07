@@ -5,12 +5,16 @@ import { connectToDatabase } from "../mongoose";
 import Tag from "@/database/tag.model";
 import {
   CreateQuestionParams,
+  DeleteQuestionParams,
+  EditQuestionParams,
   GetQuestionByIdParams,
   GetQuestionsParams,
   QuestionVoteParams,
 } from "./shared.types";
 import User from "@/database/user.model";
 import { revalidatePath } from "next/cache";
+import Answer from "@/database/answer.model";
+import Interaction from "@/database/interaction.model";
 
 // GET QUESTIONS
 export async function getQuestions(params: GetQuestionsParams) {
@@ -165,5 +169,54 @@ export async function downvoteQuestion(params: QuestionVoteParams) {
   } catch (error) {
     console.log("Error in downvoteQuestion: ", error);
     throw new Error("Failed to downvote a question");
+  }
+}
+
+// DELETE A QUESTION
+export async function deleteQuestion(params: DeleteQuestionParams) {
+  try {
+    await connectToDatabase();
+    const { questionId, path } = params;
+
+    await Question.deleteOne({ _id: questionId });
+
+    // Delete all answers and interactions associated with the question
+    await Answer.deleteMany({ question: questionId });
+    await Interaction.deleteMany({ question: questionId });
+
+    // remove the questionId in the questions[] of tags
+    await Tag.updateMany(
+      { questions: questionId },
+      { $pull: { questions: questionId } }
+    );
+
+    revalidatePath(path);
+  } catch (error) {
+    console.log("Error in deleteQuestion: ", error);
+    throw new Error("Failed to delete a question");
+  }
+}
+
+// EDIT A QUESTION
+export async function editQuestion(params: EditQuestionParams) {
+  try {
+    connectToDatabase();
+    const { questionId, title, content, path } = params;
+
+    const question = await Question.findById(questionId).populate("tags");
+
+    if (!question) {
+      throw new Error("Question not found");
+    }
+
+    question.title = title; // change the value of 'question.title' to the value of 'title'
+    question.content = content; // change the value of 'question.content' to whatever the value of 'content'
+
+    await question.save(); // Asynchronously save changes to the database
+
+    revalidatePath(path);
+  } catch (error) {
+    console.log("Error in editQuestion", error);
+    throw new Error("Failed to Update the Question");
   }
 }

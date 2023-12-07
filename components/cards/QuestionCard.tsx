@@ -3,6 +3,8 @@ import React from "react";
 import RenderTag from "../shared/RenderTag";
 import Metric from "../shared/Metric";
 import { formatNumberWithExtension, getTimestamp } from "@/lib/utils";
+import { SignedIn } from "@clerk/nextjs";
+import EditDeleteAction from "../shared/EditDeleteAction";
 
 interface Answer {
   answerId: string;
@@ -14,7 +16,7 @@ interface QuestionCardProps {
   clerkId?: string | null;
   title: string;
   tags: { _id: string; name: string }[];
-  author: { _id: string; name: string; picture: string };
+  author: { _id: string; name: string; picture: string; clerkId: string };
   upvotes: string[];
   views: number;
   answers: Answer[];
@@ -32,6 +34,7 @@ const QuestionCard = ({
   answers,
   createdAt,
 }: QuestionCardProps) => {
+  const showActionButtons = clerkId && clerkId === author.clerkId;
   return (
     <div className="card-wrapper rounded-xl p-9 sm:px-11">
       <div className="flex flex-col-reverse items-start justify-between gap-5 sm:flex-row">
@@ -48,6 +51,12 @@ const QuestionCard = ({
             </h3>
           </Link>
         </div>
+
+        <SignedIn>
+          {showActionButtons && (
+            <EditDeleteAction type="Question" itemId={JSON.stringify(_id)} />
+          )}
+        </SignedIn>
       </div>
 
       {/* Display Tags */}
@@ -64,7 +73,7 @@ const QuestionCard = ({
           alt="user"
           value={author.name}
           title={` - asked ${getTimestamp(createdAt)}`}
-          href={`/profile/${author._id}`}
+          href={`/profile/${author.clerkId}`} // the params.id used is 'clerkId', not the '_id'
           isAuthor
           textStyles="body-medium text-dark400_light700"
         />
