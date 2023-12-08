@@ -85,3 +85,21 @@ export async function getQuestionsByTagId(params: GetQuestionsByTagIdParams) {
     throw error;
   }
 }
+
+// GET TOP POPULAR TAGS
+export async function getTopPopularTags() {
+  try {
+    connectToDatabase();
+
+    const popularTags = await Tag.aggregate([
+      { $project: { name: 1, numberOfQuestions: { $size: "$questions" } } }, // 'numberOfQuestions' : array lenght of 'questions' field
+      { $sort: { numberOfQuestions: -1 } }, // sort in descending order based on 'numberOfQuestions' value
+      { $limit: 5 },
+    ]);
+
+    return popularTags; // {_id: value, name: value, numberofQuestions: array lenght of 'questions' field}
+  } catch (error) {
+    console.log("Error in getTopPopularTags: ", error);
+    throw error;
+  }
+}

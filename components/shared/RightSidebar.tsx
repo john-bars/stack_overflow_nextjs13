@@ -2,17 +2,14 @@ import Image from "next/image";
 import Link from "next/link";
 import RenderTag from "./RenderTag";
 import { getHotQuestions } from "@/lib/actions/question.action";
+import { getTopPopularTags } from "@/lib/actions/tag.actions";
 
 const RightSidebar = async () => {
   const hotQuestions = await getHotQuestions();
+  const popularTags = await getTopPopularTags();
 
-  const popularTags = [
-    { _id: "1", name: "NextJS", totalQuestions: 19 },
-    { _id: "2", name: "Test", totalQuestions: 14 },
-    { _id: "3", name: "React", totalQuestions: 13 },
-    { _id: "4", name: "CSS", totalQuestions: 8 },
-    { _id: "5", name: "Next JS", totalQuestions: 7 },
-  ];
+  // console.log(hotQuestions);
+  // console.log(popularTags);
 
   return (
     <section className="background-light900_dark200 light-border custom-scrollbar sticky right-0 top-0 flex h-screen w-[300px] flex-col gap-16 overflow-y-auto border-l p-6 pt-[9rem] shadow-light-300 dark:shadow-none max-xl:hidden">
@@ -47,7 +44,7 @@ const RightSidebar = async () => {
               key={tag._id}
               _id={tag._id}
               name={tag.name}
-              totalQuestions={tag.totalQuestions}
+              totalQuestions={tag.numberOfQuestions}
               showCount
             />
           ))}
