@@ -220,3 +220,23 @@ export async function editQuestion(params: EditQuestionParams) {
     throw new Error("Failed to Update the Question");
   }
 }
+
+// GET HOT QUESTIONS
+export async function getHotQuestions() {
+  try {
+    connectToDatabase();
+
+    // get all the questions and sort them with views and upvotes  in descending order
+    const hotQuestions = await Question.find({})
+      .sort({
+        views: -1,
+        upvotes: -1,
+      })
+      .limit(5);
+
+    return hotQuestions;
+  } catch (error) {
+    console.log("Error in getHotQuestions", error);
+    throw error;
+  }
+}
