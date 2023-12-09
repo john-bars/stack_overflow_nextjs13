@@ -96,9 +96,23 @@ export async function deleteUser(params: DeleteUserParams) {
 export async function getAllUsers(params: GetAllUsersParams) {
   try {
     connectToDatabase();
-    // const { page = 1, pageSize = 20, filter, searchQuery } = params;
+    const { searchQuery } = params;
 
-    const users = await User.find({}) // get all the users
+    const query: FilterQuery<typeof User> = {};
+
+    // If a searchQuery is provided, construct a MongoDB $or query for title or content
+    if (searchQuery) {
+      query.$or = [
+        {
+          name: { $regex: new RegExp(searchQuery, "i") },
+        },
+        {
+          username: { $regex: new RegExp(searchQuery, "i") },
+        },
+      ];
+    }
+
+    const users = await User.find(query) // get all the users that matches the query
       .sort({ createdAt: 1 }); // show the new ones at the top
     return { users };
   } catch (error) {
