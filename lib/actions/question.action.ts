@@ -15,18 +15,36 @@ import User from "@/database/user.model";
 import { revalidatePath } from "next/cache";
 import Answer from "@/database/answer.model";
 import Interaction from "@/database/interaction.model";
+import { FilterQuery } from "mongoose";
 
 // GET QUESTIONS
 export async function getQuestions(params: GetQuestionsParams) {
   try {
     connectToDatabase();
 
-    const questions = await Question.find({}) // get all the questions
+    const { searchQuery } = params;
+
+    const query: FilterQuery<typeof Question> = {};
+
+    // If a searchQuery is provided, construct a MongoDB $or query for title or content
+    if (searchQuery) {
+      query.$or = [
+        {
+          title: { $regex: new RegExp(searchQuery, "i") },
+        },
+        {
+          content: { $regex: new RegExp(searchQuery, "i") },
+        },
+      ];
+    }
+
+    // Retrieve questions from the database based on the constructed query
+    const questions = await Question.find(query) // get all the questions that matches the query
       .populate({ path: "tags", model: Tag }) // include the tags
       .populate({ path: "author", model: User }) // include the author
       .sort({ createdAt: -1 }); // sort by the latest question
 
-    return { questions };
+    return { questions }; // Return the retrieved questions as an object
   } catch (error) {
     console.error("Error in getQuestions:", error);
     throw new Error("Failed to retrieve questions.");
