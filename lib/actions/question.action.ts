@@ -22,7 +22,7 @@ export async function getQuestions(params: GetQuestionsParams) {
   try {
     connectToDatabase();
 
-    const { searchQuery } = params;
+    const { searchQuery, filter } = params;
 
     const query: FilterQuery<typeof Question> = {};
 
@@ -38,11 +38,24 @@ export async function getQuestions(params: GetQuestionsParams) {
       ];
     }
 
+    let sortOptions = {};
+    switch (filter) {
+      case "newest":
+        sortOptions = { createdAt: -1 };
+        break;
+      case "frequent":
+        sortOptions = { views: -1 };
+        break;
+      case "unanswered":
+        query.answers = { $size: 0 };
+        break;
+    }
+
     // Retrieve questions from the database based on the constructed query
     const questions = await Question.find(query) // get all the questions that matches the query
       .populate({ path: "tags", model: Tag }) // include the tags
       .populate({ path: "author", model: User }) // include the author
-      .sort({ createdAt: -1 }); // sort by the latest question
+      .sort(sortOptions); // sort by the latest question
 
     return { questions }; // Return the retrieved questions as an object
   } catch (error) {
