@@ -42,7 +42,7 @@ export async function getTopInteractedTags(params: GetTopInteractedTagsParams) {
 export async function getAllTags(params: GetAllTagsParams) {
   try {
     connectToDatabase();
-    const { searchQuery } = params;
+    const { searchQuery, filter } = params;
 
     const query: FilterQuery<typeof Tag> = {};
 
@@ -51,8 +51,27 @@ export async function getAllTags(params: GetAllTagsParams) {
       query.$or = [{ name: { $regex: new RegExp(searchQuery, "i") } }];
     }
 
+    let sortOptions = {};
+    switch (filter) {
+      case "popular":
+        sortOptions = { questions: -1 };
+        break;
+      case "recent":
+        sortOptions = { createdAt: -1 };
+        break;
+      case "name":
+        sortOptions = { name: 1 };
+        break;
+      case "old":
+        sortOptions = { createdAt: 1 };
+        break;
+
+      default:
+        break;
+    }
+
     // Retrieve tags from the database based on the constructed query
-    const tags = await Tag.find(query);
+    const tags = await Tag.find(query).sort(sortOptions);
 
     // Return an object containing the retrieved tags
     return { tags };
