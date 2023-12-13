@@ -22,7 +22,10 @@ export async function getQuestions(params: GetQuestionsParams) {
   try {
     connectToDatabase();
 
-    const { searchQuery, filter } = params;
+    const { searchQuery, filter, page = 1, pageSize = 20 } = params;
+
+    // Calculate the number of posts to skip based on the page number and page size
+    const skipAmount = (page - 1) * pageSize;
 
     const query: FilterQuery<typeof Question> = {};
 
@@ -55,9 +58,14 @@ export async function getQuestions(params: GetQuestionsParams) {
     const questions = await Question.find(query) // get all the questions that matches the query
       .populate({ path: "tags", model: Tag }) // include the tags
       .populate({ path: "author", model: User }) // include the author
-      .sort(sortOptions); // sort by the latest question
+      .sort(sortOptions) // sort by the latest question
+      .skip(skipAmount)
+      .limit(pageSize);
 
-    return { questions }; // Return the retrieved questions as an object
+    const totalQuestions = await Question.countDocuments(query);
+    const isNext = totalQuestions > skipAmount + questions.length; // true: there are more questions available; false: the current set of questions is the last set
+
+    return { questions, isNext }; // Return the retrieved questions as an object
   } catch (error) {
     console.error("Error in getQuestions:", error);
     throw new Error("Failed to retrieve questions.");
