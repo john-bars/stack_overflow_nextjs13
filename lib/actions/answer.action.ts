@@ -39,7 +39,8 @@ export async function createAnswer(params: CreateAnswerParams) {
 export async function getAnswers(params: GetAnswersParams) {
   try {
     connectToDatabase();
-    const { questionId, sortBy } = params;
+    const { questionId, sortBy, page = 1, pageSize = 10 } = params;
+    const skipAmount = (page - 1) * pageSize;
 
     let sortOptions = {};
     switch (sortBy) {
@@ -63,9 +64,15 @@ export async function getAnswers(params: GetAnswersParams) {
     // Find answers in the database based on the question id
     const answers = await Answer.find({ question: questionId })
       .populate("author", "_id clerkId name picture") // populate the 'author' field with additional data
-      .sort(sortOptions);
+      .sort(sortOptions)
+      .skip(skipAmount)
+      .limit(pageSize);
 
-    return { answers };
+    const totalAnswers = await Answer.countDocuments({ question: questionId });
+
+    const isNextAnswer = totalAnswers > skipAmount + answers.length;
+
+    return { answers, isNextAnswer };
   } catch (error) {
     console.log("Error in getAnswers", error);
     throw new Error("Failed to get the answers in the database");
