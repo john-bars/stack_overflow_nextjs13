@@ -17,6 +17,8 @@ import Question from "@/database/question.model";
 import { FilterQuery } from "mongoose";
 import Tag from "@/database/tag.model";
 import Answer from "@/database/answer.model";
+import { BadgeCriteriaType } from "@/types";
+import { assignBadges } from "../utils";
 
 // get the user with a clerkId equall to userId
 export async function getUserById(params: any) {
@@ -260,10 +262,81 @@ export async function getUserInfo(params: GetUserByIdParams) {
     const totalQuestions = await Question.countDocuments({ author: user._id });
     const totalAnswers = await Answer.countDocuments({ author: user._id });
 
+    // Calculate the total number of upvotes for questions authored by a particular user
+    const [questionUpvotes] = await Question.aggregate([
+      // Stage 1: Filter questions by the author's user ID
+      { $match: { author: user._id } },
+
+      // Stage 2: Project a new field 'upvotes' representing the number of upvotes for each question
+      {
+        $project: {
+          _id: 0, // exclude the '_id' field in the result
+          upvotes: { $size: "$upvotes" }, // Calculate the size of the 'upvotes' array
+        },
+      },
+
+      // Stage 3: Group all filtered documents and sum up the 'upvotes' field
+      {
+        $group: {
+          _id: null, // Group all documents together (no specific criteria)
+          totalUpvotes: { $sum: "$upvotes" }, // Calculate the sum of 'upvotes' across all grouped documents
+        },
+      },
+    ]);
+
+    // Calculate the total number of upvotes for answers authored by a particular user
+    const [answerUpvotes] = await Answer.aggregate([
+      { $match: { author: user._id } },
+      {
+        $project: {
+          _id: 0,
+          upvotes: { $size: "$upvotes" },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalUpvotes: { $sum: "$upvotes" },
+        },
+      },
+    ]);
+
+    // Calculate the total number of views for answers authored by a particular user
+    const [questionViews] = await Answer.aggregate([
+      { $match: { author: user._id } },
+      {
+        $group: {
+          _id: null,
+          totalViews: { $sum: "$views" },
+        },
+      },
+    ]);
+
+    const criteria = [
+      { type: "QUESTION_COUNT" as BadgeCriteriaType, count: totalQuestions },
+      { type: "ANSWER_COUNT" as BadgeCriteriaType, count: totalAnswers },
+      {
+        type: "QUESTION_UPVOTES" as BadgeCriteriaType,
+        count: questionUpvotes?.totalUpvotes || 0,
+      },
+      {
+        type: "ANSWER_UPVOTES" as BadgeCriteriaType,
+        count: answerUpvotes?.totalUpvotes || 0,
+      },
+      {
+        type: "TOTAL_VIEWS" as BadgeCriteriaType,
+        count: questionViews?.totalViews || 0,
+      },
+    ];
+
+    const badgeCounts = assignBadges({ criteria });
+
     return {
       user,
       totalQuestions,
       totalAnswers,
+      badgeCounts,
+      reputation: user.reputation,
     };
   } catch (error) {
     console.log(error);
