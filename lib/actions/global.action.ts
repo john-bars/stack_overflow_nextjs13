@@ -27,6 +27,7 @@ export async function globalSearch(params: SearchParams) {
     // If 'type' query value is not defined, search across all types
     if (!typeLower || !SearchableTypes.includes(typeLower)) {
       for (const { model, searchfield, type } of modelsAndTypes) {
+        // Using 'forEach' and 'map' won't work well with async-await
         const queryResults = await model
           .find({ [searchfield]: regexQuery })
           .limit(2);
