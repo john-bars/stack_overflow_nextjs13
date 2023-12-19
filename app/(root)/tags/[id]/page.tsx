@@ -3,10 +3,9 @@ import NoResult from "@/components/shared/NoResult";
 import Pagination from "@/components/shared/Pagination";
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
 import { getQuestionsByTagId } from "@/lib/actions/tag.actions";
-import { URLProps } from "@/types";
 import React from "react";
 
-const Page = async ({ params, searchParams }: URLProps) => {
+const Page = async ({ params, searchParams }: any) => {
   const result = await getQuestionsByTagId({
     tagId: params.id, // the id in '/tags/[id]'
     page: searchParams ? +searchParams.page : 1,
