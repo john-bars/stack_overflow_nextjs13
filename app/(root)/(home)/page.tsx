@@ -8,7 +8,12 @@ import { Button } from "@/components/ui/button";
 import { HomePageFilters } from "@/constants/filters";
 import { getQuestions } from "@/lib/actions/question.action";
 import { SearchParamsProps } from "@/types";
+import { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Home | Dev Overflow",
+};
 
 export default async function Home({ searchParams }: SearchParamsProps) {
   const result = await getQuestions({
@@ -18,8 +23,6 @@ export default async function Home({ searchParams }: SearchParamsProps) {
   });
   // console.log(result);
   // console.log("searchParams: ", searchParams);
-
-  // TODO: Fetch Recommended Questions
 
   return (
     <>
