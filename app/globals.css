@@ -82,6 +82,14 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
+.bio-scrollbar::-webkit-scrollbar {
+  @apply w-1 bg-slate-100 dark:bg-dark-400 rounded-full;
+}
+
+.bio-scrollbar::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-[#888] hover:bg-[#555] dark:bg-dark-200;
+}
+
 .custom-scrollbar::-webkit-scrollbar {
   width: 3px;
   height: 3px;

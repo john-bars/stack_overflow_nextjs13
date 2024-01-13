@@ -15,12 +15,10 @@ import Link from "next/link";
 const Page = async ({ params, searchParams }: URLProps) => {
   const { userId: clerkId } = auth();
   const userInfo = await getUserInfo({ userId: params.id });
-  // console.log("user info: ", userInfo);
-  // console.log("clerkId: ", clerkId);
 
   return (
     <>
-      <div className="flex flex-col-reverse items-start justify-between sm:flex-row">
+      <div className="relative">
         <div className="flex flex-col items-start gap-4 lg:flex-row">
           <Image
             src={userInfo?.user.picture}
@@ -30,19 +28,20 @@ const Page = async ({ params, searchParams }: URLProps) => {
             className="rounded-full object-cover"
           />
 
-          <div className="mt-3">
-            <h2 className="h2-bold text-dark100_light900">
+          <div className="mt-3 ">
+            <h2 className="h2-bold text-dark100_light900 w-80 truncate xs:w-[23rem] sm:w-[499px] lg:w-[320px]">
               {userInfo.user.name}
             </h2>
-            <p className="paragraph-regular text-dark200_light800">
+            <p className="paragraph-regular text-dark200_light800 w-80 truncate xs:w-[23rem] sm:w-[499px]">
               @{userInfo.user.username}
             </p>
-            <div className="mt-5 flex flex-wrap items-center justify-start gap-5">
+
+            <div className="mt-5 flex w-80 flex-wrap items-center justify-start gap-5 xs:w-[23rem] sm:w-[499px] md:w-full lg:w-full">
               {userInfo.user.portfolioWebsite && (
                 <ProfileLink
                   imgUrl="/assets/icons/link.svg"
                   href={userInfo.user.portfolioWebsite}
-                  title="Portfolio"
+                  title={userInfo.user.portfolioWebsite || "Portfolio"}
                 />
               )}
               {userInfo.user.location && (
@@ -59,18 +58,18 @@ const Page = async ({ params, searchParams }: URLProps) => {
             </div>
 
             {userInfo.user.bio && (
-              <p className="paragraph-regular text-dark400_light800 mt-8">
+              <p className="paragraph-regular text-dark400_light800 bio-scrollbar mt-8 line-clamp-10 overflow-y-scroll p-3">
                 {userInfo.user.bio}
               </p>
             )}
           </div>
         </div>
 
-        <div className="flex justify-end max-sm:mb-5 max-sm:w-full sm:mt-3">
+        <div className="absolute right-0 top-0">
           <SignedIn>
             {clerkId === userInfo.user.clerkId && (
               <Link href="/profile/edit">
-                <Button className="paragraph-medium btn-secondary text-dark300_light900 min-h-[46px] min-w-[175px] px-4 py-3">
+                <Button className="paragraph-medium btn-secondary text-dark300_light900 min-h-[46px] min-w-[140px] px-4 py-3 sm:min-w-[175px]">
                   Edit Profile
                 </Button>
               </Link>

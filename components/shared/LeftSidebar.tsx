@@ -1,17 +1,18 @@
 "use client";
-import { SignedOut, useAuth } from "@clerk/nextjs";
+
+import { sidebarLinks } from "@/constants";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React from "react";
 import { Button } from "../ui/button";
-import Image from "next/image";
-import { sidebarLinks } from "@/constants";
+import { SignedOut, useAuth } from "@clerk/nextjs";
 
 const LeftSidebar = () => {
   const { userId } = useAuth();
   const pathname = usePathname();
+
   return (
-    <section className="background-light900_dark200 light-border custom-scrollbar sticky left-0 top-0 flex h-screen flex-col justify-between overflow-y-auto border-r p-6 pt-[9rem] shadow-light-300 dark:shadow-none max-sm:hidden lg:w-[266]">
+    <section className="background-light900_dark200 light-border custom-scrollbar sticky left-0 top-0 flex h-screen shrink-0 flex-col justify-between overflow-y-auto border-r p-6 pt-36 shadow-light-300 dark:shadow-none max-sm:hidden sm:w-[101px] lg:w-64">
       <div className="flex flex-1 flex-col gap-6">
         {sidebarLinks.map((item) => {
           const isActive =
@@ -25,22 +26,23 @@ const LeftSidebar = () => {
               return null;
             }
           }
+
           return (
             <Link
               href={item.route}
               key={item.label}
-              className={` ${
+              className={`${
                 isActive
                   ? "primary-gradient rounded-lg text-light-900"
                   : "text-dark300_light900"
-              } flex items-center justify-start gap-4 bg-transparent p-4`}
+              }  flex items-center justify-start gap-4 bg-transparent p-4`}
             >
               <Image
                 src={item.imgURL}
                 alt={item.label}
                 width={20}
                 height={20}
-                className={`${isActive ? "" : "invert-colors"}`}
+                className={`sm:w-5 ${isActive ? "" : "invert-colors"}`}
               />
               <p
                 className={`${
@@ -65,19 +67,22 @@ const LeftSidebar = () => {
                 height={20}
                 className="invert-colors lg:hidden"
               />
-              <span className="primary-text-gradient max-lg:hidden">Login</span>
+              <span className="primary-text-gradient max-lg:hidden">
+                Log In
+              </span>
             </Button>
           </Link>
+
           <Link href="/sign-up">
             <Button className="small-medium light-border-2 btn-tertiary text-dark400_light900 min-h-[41px] w-full rounded-lg border px-4 py-3 shadow-none">
               <Image
                 src="/assets/icons/sign-up.svg"
-                alt="login"
+                alt="sign up"
                 width={20}
                 height={20}
-                className="invert-colors h-auto w-auto lg:hidden"
+                className="invert-colors lg:hidden"
               />
-              <span className="max-lg:hidden">Sign Up</span>
+              <span className="max-lg:hidden">Sign up</span>
             </Button>
           </Link>
         </div>

@@ -76,7 +76,7 @@ const JobCard = ({ job }: { job: Job }) => {
 
       <div className="w-full">
         <div className="flex-between flex-wrap gap-2">
-          <p className="base-semibold text-dark200_light900">
+          <p className="base-semibold text-dark200_light900 text-lg leading-[25.2px]">
             {processJobTitle(job_title)}
           </p>
           <div className="hidden sm:flex">

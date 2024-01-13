@@ -1,5 +1,6 @@
 "use client";
 
+import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -15,29 +16,75 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "../ui/textarea";
-import { useState } from "react";
 import { ProfileSchema } from "@/lib/validation";
 import { usePathname, useRouter } from "next/navigation";
 import { updateUser } from "@/lib/actions/user.action";
+import { toast } from "../ui/use-toast";
+import { ToastAction } from "../ui/toast";
 
 interface Props {
   clerkId: string;
   user: string;
 }
 
+interface FormFieldProps {
+  control: any;
+  name: string;
+  label: string;
+  placeholder: string;
+  type?: "text" | "url" | "textarea" | undefined;
+}
+
+const CustomFormField: React.FC<FormFieldProps> = ({
+  control,
+  name,
+  label,
+  placeholder,
+  type = "text",
+}) => (
+  <FormField
+    control={control}
+    name={name}
+    render={({ field }) => (
+      <FormItem>
+        <FormLabel>
+          {label}{" "}
+          {(name === "name" || name === "username") && (
+            <span className="text-primary-500 dark:text-primary-500">*</span>
+          )}
+        </FormLabel>
+        <FormControl>
+          {type === "textarea" ? (
+            <Textarea
+              placeholder={placeholder}
+              {...field}
+              className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 h-[30vh] min-h-[56px] border"
+            />
+          ) : (
+            <Input
+              type={type}
+              placeholder={placeholder}
+              {...field}
+              className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border"
+            />
+          )}
+        </FormControl>
+        <FormMessage className="text-destructive dark:text-destructive" />
+      </FormItem>
+    )}
+  />
+);
+
+// Use the CustomFormField component in your Profile component
 const Profile = ({ clerkId, user }: Props) => {
   const parsedUser = JSON.parse(user);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
-  // console.log("parsedUser: ", parsedUser);
-  // console.log("clerkId: ", clerkId);
-
   // 1. Define your form.
   const form = useForm<z.infer<typeof ProfileSchema>>({
     resolver: zodResolver(ProfileSchema),
-    // use the fetched user data as default value to display it in the form; use "" if it's not available
     defaultValues: {
       name: parsedUser.name || "",
       username: parsedUser.username || "",
@@ -61,9 +108,19 @@ const Profile = ({ clerkId, user }: Props) => {
         path: pathname,
       });
 
+      toast({
+        title: "Profile saved successfully",
+        variant: "default",
+      });
+
       router.back();
     } catch (error) {
-      console.log(error);
+      console.error("Error submitting form:", error);
+      toast({
+        title: "Uh oh! Something went wrong. Please try again",
+        description: "There was a problem with your request.",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      });
       throw error;
     } finally {
       setIsSubmitting(false);
@@ -74,100 +131,41 @@ const Profile = ({ clerkId, user }: Props) => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="mt-9 flex w-full flex-col gap-9"
+        className="mt-9 flex w-full flex-col gap-6"
       >
-        <FormField
+        <CustomFormField
           control={form.control}
           name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>
-                Name <span className="text-primary-500">*</span>
-              </FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Your name"
-                  {...field}
-                  className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Name"
+          placeholder="Your name"
         />
-        <FormField
+        <CustomFormField
           control={form.control}
           name="username"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>
-                Username <span className="text-primary-500">*</span>
-              </FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Your username"
-                  {...field}
-                  className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Username"
+          placeholder="Your username"
         />
-        <FormField
+        <CustomFormField
           control={form.control}
           name="portfolioWebsite"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Portfolio Link</FormLabel>
-              <FormControl>
-                <Input
-                  type="url"
-                  placeholder="Your portfolio URL"
-                  {...field}
-                  className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Portfolio Link"
+          placeholder="Your portfolio URL"
         />
-        <FormField
+        <CustomFormField
           control={form.control}
           name="location"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Location</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Where are you from?"
-                  {...field}
-                  className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Location"
+          placeholder="Where are you from?"
         />
-        <FormField
+        <CustomFormField
           control={form.control}
           name="bio"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Bio</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="What's special about you?"
-                  {...field}
-                  className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Bio"
+          placeholder="What's special about you?"
+          type="textarea"
         />
 
-        <div className="mt-7 flex justify-end">
+        <div className="mt-6 flex justify-end">
           <Button
             type="submit"
             className="primary-gradient w-fit"

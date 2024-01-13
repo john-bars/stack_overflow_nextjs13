@@ -16,7 +16,14 @@ module.exports = {
       },
     },
     extend: {
+      lineClamp: {
+        7: "7",
+        8: "8",
+        9: "9",
+        10: "10",
+      },
       colors: {
+        destructive: "#FF7000",
         primary: {
           500: "#FF7000",
           100: "#FFF1E6",

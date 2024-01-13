@@ -10,10 +10,44 @@ export const AnswerSchema = z.object({
   answer: z.string().min(100),
 });
 
+const isValidURL = (value: string) => {
+  const isURL = value === "" || /^https?:\/\/\S+$/.test(value);
+  if (!isURL) {
+    return false;
+  }
+  return true;
+};
+
 export const ProfileSchema = z.object({
-  name: z.string().min(5).max(50),
-  username: z.string().min(5).max(50),
-  bio: z.string().min(5).max(50),
-  location: z.string().min(5).max(50),
-  portfolioWebsite: z.string().url(),
+  name: z
+    .string()
+    .max(50)
+    .refine((value) => value && value.length >= 3, {
+      message: "Name must be at least 3 characters",
+    }),
+  username: z
+    .string()
+    .max(50)
+    .refine((value) => value && value.length >= 3, {
+      message: "username must be at least 3 characters",
+    }),
+  bio: z
+    .string()
+    .optional()
+    .refine((value) => value === "" || (value && value.length >= 3), {
+      message: "Bio must be at least 3 characters",
+    })
+    .refine((value) => value === "" || (value && value.length <= 2000), {
+      message: "Bio must not be more than 2000 characters",
+    }),
+
+  location: z
+    .string()
+    .optional()
+    .refine((value) => value === "" || value!.length <= 50, {
+      message: "Please provide proper location",
+    }),
+  portfolioWebsite: z
+    .string()
+    .refine(isValidURL, { message: "Please provide a valid URL" }),
 });
