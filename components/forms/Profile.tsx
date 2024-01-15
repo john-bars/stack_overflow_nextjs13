@@ -58,7 +58,7 @@ const CustomFormField: React.FC<FormFieldProps> = ({
             <Textarea
               placeholder={placeholder}
               {...field}
-              className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 h-[30vh] min-h-[56px] border"
+              className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 bio-scrollbar h-[30vh] min-h-[56px] border"
             />
           ) : (
             <Input

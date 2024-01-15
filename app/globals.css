@@ -83,15 +83,15 @@ body {
 }
 
 .bio-scrollbar::-webkit-scrollbar {
-  @apply w-1 bg-slate-100 dark:bg-dark-400 rounded-full;
+  @apply w-1 bg-light-700 dark:bg-dark-300 rounded-full;
 }
 
 .bio-scrollbar::-webkit-scrollbar-thumb {
-  @apply rounded-full bg-[#888] hover:bg-[#555] dark:bg-dark-200;
+  @apply w-1 rounded-full bg-[#888] hover:bg-[#555];
 }
 
 .custom-scrollbar::-webkit-scrollbar {
-  @apply w-[3px] h-[3px] rounded-[2px] bg-[#ffffff];
+  @apply w-[3px] rounded-full bg-[#ffffff];
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
