@@ -36,7 +36,11 @@ const ParseHTML = ({ data }: Props) => {
   useEffect(() => {
     Prism.highlightAll();
   }, []);
-  return <div>{parse(data)}</div>;
+  return (
+    <div className="grid w-fit grid-cols-1 justify-items-stretch">
+      {parse(data)}
+    </div>
+  );
 };
 
 export default ParseHTML;
