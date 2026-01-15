@@ -4,8 +4,11 @@ import { JobFilterParams } from "./shared.types";
 // Country List in Alphabetical order
 export const fetchCountries = async () => {
   try {
-    const response = await fetch("https://restcountries.com/v3.1/all");
+    const response = await fetch(
+      "https://restcountries.com/v3.1/all?fields=name"
+    );
     const data = await response.json();
+    console.log(data);
 
     const countryNames = data.map((country: Country) => country.name.common);
     const sortedCountryNames = countryNames.sort();

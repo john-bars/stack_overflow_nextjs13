@@ -159,6 +159,7 @@ export function Question({ mongoUserId, questionDetails, type }: Props) {
               <FormControl className="mt-3.5">
                 {/* Editor component */}
                 <Editor
+                  key={mode} // remount when mode changes
                   apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_API_KEY}
                   onInit={(evt, editor) =>
                     // @ts-ignore
@@ -191,7 +192,7 @@ export function Question({ mongoUserId, questionDetails, type }: Props) {
                     content_style:
                       "body { font-family: Inter; font-size: 16px }",
                     skin: mode === "dark" ? "oxide-dark" : "oxide",
-                    content_css: mode === "dark" ? "dark" : "light",
+                    content_css: mode === "dark" ? "dark" : "default",
                   }}
                 />
               </FormControl>

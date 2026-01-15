@@ -54,13 +54,14 @@ const JobCard = ({ job }: { job: Job }) => {
         {employer_logo ? (
           <Link
             href={employer_website ?? "/jobs"}
-            className="background-light800_dark400 relative h-16 w-16 rounded-xl"
+            className="background-light800_dark400 relative h-16 w-16 rounded-xl p-2"
           >
             <Image
               src={employer_logo}
               alt="company logo"
               fill
-              className="h-full w-full object-contain p-2"
+              className="object-contain"
+              sizes="4rem"
             />
           </Link>
         ) : (
