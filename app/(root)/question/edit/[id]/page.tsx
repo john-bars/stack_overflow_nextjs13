@@ -2,10 +2,11 @@ import Question from "@/components/forms/Question";
 import { getQuestionById } from "@/lib/actions/question.action";
 import { getUserById } from "@/lib/actions/user.action";
 import { ParamsProps } from "@/types";
-import { auth } from "@clerk/nextjs";
+import { cookies } from "next/headers";
 
 const Page = async ({ params }: ParamsProps) => {
-  const { userId } = auth(); // get the clerkId
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("userId")?.value;
 
   if (!userId) return null;
 

@@ -2,9 +2,12 @@ import LeftSidebar from "@/components/shared/LeftSidebar";
 import RightSidebar from "@/components/shared/RightSidebar";
 import Navbar from "@/components/shared/navbar/Navbar";
 import { Toaster } from "@/components/ui/toaster";
+import { cookies } from "next/headers";
 import React from "react";
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
+const Layout = async ({ children }: { children: React.ReactNode }) => {
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("userId")?.value;
   return (
     <main className="background-light850_dark100 relative">
       <Navbar />

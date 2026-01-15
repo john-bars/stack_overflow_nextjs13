@@ -5,10 +5,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "../ui/button";
-import { SignedOut, useAuth } from "@clerk/nextjs";
+import { SignedOut } from "@clerk/nextjs";
 
-const LeftSidebar = () => {
-  const { userId } = useAuth();
+interface LeftSidebarProps {
+  userId?: string;
+}
+
+const LeftSidebar = ({ userId }: LeftSidebarProps) => {
   const pathname = usePathname();
 
   return (

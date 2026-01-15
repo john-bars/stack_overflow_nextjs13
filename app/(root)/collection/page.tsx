@@ -6,10 +6,12 @@ import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
 import { QuestionFilters } from "@/constants/filters";
 import { getSavedQuestions } from "@/lib/actions/user.action";
 import { SearchParamsProps } from "@/types";
-import { auth } from "@clerk/nextjs";
+import { cookies } from "next/headers";
 
 export default async function Home({ searchParams }: SearchParamsProps) {
-  const { userId } = auth();
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("userId")?.value;
+
   if (!userId) return null;
 
   const result = await getSavedQuestions({

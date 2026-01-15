@@ -8,12 +8,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getUserInfo } from "@/lib/actions/user.action";
 import { getJoinedDate } from "@/lib/utils";
 import { URLProps } from "@/types";
-import { SignedIn, auth } from "@clerk/nextjs";
+import { SignedIn } from "@clerk/nextjs";
+import { cookies } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
 
 const Page = async ({ params, searchParams }: URLProps) => {
-  const { userId: clerkId } = auth();
+  const cookieStore = await cookies();
+  const clerkId = cookieStore.get("userId")?.value;
+
   const userInfo = await getUserInfo({ userId: params.id });
 
   return (
