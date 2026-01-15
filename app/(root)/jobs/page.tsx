@@ -20,15 +20,16 @@ interface Props {
 const Page = async ({ searchParams }: Props) => {
   const countries = await fetchCountries();
   const userLocation = await fetchLocation();
+  const params = await searchParams;
 
   const jobs = await fetchJobs({
-    query: `${searchParams.q || ""},${searchParams.location || userLocation}`,
-    page: searchParams.page ?? 1,
+    query: `${params.q || ""},${params.location || userLocation}`,
+    page: params.page ?? 1,
   });
 
   // console.log(jobs);
 
-  const page = parseInt(searchParams.page ?? 1);
+  const page = parseInt(params.page ?? 1);
   return (
     <>
       <h1 className="h1-bold text-dark100_light900">Jobs</h1>

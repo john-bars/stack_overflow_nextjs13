@@ -6,10 +6,12 @@ import { getQuestionsByTagId } from "@/lib/actions/tag.actions";
 import React from "react";
 
 const Page = async ({ params, searchParams }: any) => {
+  const sParams = await searchParams;
+
   const result = await getQuestionsByTagId({
     tagId: params.id, // the id in '/tags/[id]'
-    page: searchParams ? +searchParams.page : 1,
-    searchQuery: searchParams.q, // q: query
+    page: sParams ? +sParams.page : 1,
+    searchQuery: sParams.q, // q: query
   });
   //   console.log(result);
   return (

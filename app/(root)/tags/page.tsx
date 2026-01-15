@@ -9,10 +9,12 @@ import Link from "next/link";
 import React from "react";
 
 const Page = async ({ searchParams }: SearchParamsProps) => {
+  const params = await searchParams;
+
   const result = await getAllTags({
-    searchQuery: searchParams.q,
-    filter: searchParams.filter,
-    page: searchParams.page ? +searchParams?.page : 1,
+    searchQuery: params.q,
+    filter: params.filter,
+    page: params.page ? +params?.page : 1,
   });
   // console.log(result);
   return (
