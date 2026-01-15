@@ -54,5 +54,6 @@
     "eslint-plugin-n": "^15.7.0",
     "postcss": "^8.4.31",
     "typescript": "^5.9.3"
+    
   }
 }
