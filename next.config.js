@@ -13,6 +13,9 @@ const nextConfig = {
       },
     ],
   },
+
+  // Minimize logs in the terminal
+  logging: false,
 };
 
 module.exports = nextConfig;
