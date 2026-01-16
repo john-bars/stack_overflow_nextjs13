@@ -6,10 +6,11 @@ import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
 import { QuestionFilters } from "@/constants/filters";
 import { getSavedQuestions } from "@/lib/actions/user.action";
 import { SearchParamsProps } from "@/types";
-import { auth } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 
 export default async function Home({ searchParams }: SearchParamsProps) {
-  const { userId } = auth();
+  const { userId } = await auth();
+
   if (!userId) return null;
   const params = await searchParams;
 

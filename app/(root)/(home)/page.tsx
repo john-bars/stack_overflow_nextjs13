@@ -16,14 +16,14 @@ export const metadata: Metadata = {
 };
 
 export default async function Home({ searchParams }: SearchParamsProps) {
-  const params = await searchParams;
+  const { q, filter, page = "1" } = await searchParams;
+
   const result = await getQuestions({
-    searchQuery: params.q,
-    filter: params.filter,
-    page: params.page ? +params.page : 1,
+    searchQuery: q,
+    filter,
+    page: Number(page),
   });
   // console.log(result);
-  // console.log("searchParams: ", searchParams);
 
   return (
     <>
@@ -81,10 +81,7 @@ export default async function Home({ searchParams }: SearchParamsProps) {
         )}
       </div>
       <div className="mt-10">
-        <Pagination
-          pageNumber={params?.page ? +params.page : 1}
-          isNext={result.isNext}
-        />
+        <Pagination pageNumber={Number(page)} isNext={result.isNext} />
       </div>
     </>
   );

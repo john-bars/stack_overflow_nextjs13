@@ -8,7 +8,7 @@ export const fetchCountries = async () => {
       "https://restcountries.com/v3.1/all?fields=name"
     );
     const data = await response.json();
-    console.log(data);
+    // console.log(data);
 
     const countryNames = data.map((country: Country) => country.name.common);
     const sortedCountryNames = countryNames.sort();

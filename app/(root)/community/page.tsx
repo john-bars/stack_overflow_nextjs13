@@ -13,15 +13,14 @@ export const metadata: Metadata = {
 };
 
 const Page = async ({ searchParams }: SearchParamsProps) => {
-  const params = await searchParams;
+  const { q, filter, page = "1" } = await searchParams;
 
   const result = await getAllUsers({
-    searchQuery: params.q,
-    filter: params.filter,
-    page: params.page ? +params.page : 1,
+    searchQuery: q,
+    filter,
+    page: Number(page),
   });
   // console.log(result);
-  // console.log("searchParams: ", searchParams);
 
   return (
     <>
@@ -55,10 +54,7 @@ const Page = async ({ searchParams }: SearchParamsProps) => {
         )}
       </section>
       <div className="mt-10">
-        <Pagination
-          pageNumber={searchParams?.page ? +searchParams.page : 1}
-          isNext={result.isNext}
-        />
+        <Pagination pageNumber={Number(page)} isNext={result.isNext} />
       </div>
     </>
   );
