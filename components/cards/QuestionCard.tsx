@@ -1,5 +1,4 @@
 import Link from "next/link";
-import React from "react";
 import RenderTag from "../shared/RenderTag";
 import Metric from "../shared/Metric";
 import { formatNumberWithExtension, getTimestamp } from "@/lib/utils";
@@ -12,6 +11,7 @@ interface Answer {
 }
 
 interface QuestionCardProps {
+  isAuthenticated: boolean;
   _id: string;
   clerkId?: string | null;
   title: string;
@@ -24,6 +24,7 @@ interface QuestionCardProps {
 }
 
 const QuestionCard = ({
+  isAuthenticated,
   _id,
   clerkId,
   title,
@@ -35,6 +36,7 @@ const QuestionCard = ({
   createdAt,
 }: QuestionCardProps) => {
   const showActionButtons = clerkId && clerkId === author.clerkId;
+
   return (
     <div className="card-wrapper rounded-xl p-9 sm:px-11">
       <div className="flex flex-col-reverse items-start justify-between gap-5 sm:flex-row">
@@ -45,11 +47,17 @@ const QuestionCard = ({
           </span>
 
           {/* title */}
-          <Link href={`/question/${_id}`}>
+          {isAuthenticated ? (
+            <Link href={`/question/${_id}`}>
+              <h3 className="sm:h3-semibold base-semibold text-dark200_light900 line-clamp-1 flex-1">
+                {title}
+              </h3>
+            </Link>
+          ) : (
             <h3 className="sm:h3-semibold base-semibold text-dark200_light900 line-clamp-1 flex-1">
               {title}
             </h3>
-          </Link>
+          )}
         </div>
 
         <SignedIn>

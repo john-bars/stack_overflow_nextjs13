@@ -6,17 +6,17 @@ import { TagFilters } from "@/constants/filters";
 import { getAllTags } from "@/lib/actions/tag.actions";
 import { SearchParamsProps } from "@/types";
 import Link from "next/link";
-import React from "react";
 
 const Page = async ({ searchParams }: SearchParamsProps) => {
-  const params = await searchParams;
+  const { q = "", filter, page = "1" } = await searchParams;
 
   const result = await getAllTags({
-    searchQuery: params.q,
-    filter: params.filter,
-    page: params.page ? +params?.page : 1,
+    searchQuery: q,
+    filter,
+    page: Number(page),
   });
   // console.log(result);
+
   return (
     <>
       <h1 className="h1-bold text-dark100_light900">All Tags</h1>
@@ -71,10 +71,7 @@ const Page = async ({ searchParams }: SearchParamsProps) => {
       </section>
 
       <div className="mt-10">
-        <Pagination
-          pageNumber={params?.page ? +params.page : 1}
-          isNext={result.isNext}
-        />
+        <Pagination pageNumber={Number(page)} isNext={result.isNext} />
       </div>
     </>
   );

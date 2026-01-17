@@ -3,17 +3,18 @@ import NoResult from "@/components/shared/NoResult";
 import Pagination from "@/components/shared/Pagination";
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
 import { getQuestionsByTagId } from "@/lib/actions/tag.actions";
-import React from "react";
 
 const Page = async ({ params, searchParams }: any) => {
   const sParams = await searchParams;
+  const { id } = await params;
 
   const result = await getQuestionsByTagId({
-    tagId: params.id, // the id in '/tags/[id]'
+    tagId: id, // the id in '/tags/[id]'
     page: sParams ? +sParams.page : 1,
     searchQuery: sParams.q, // q: query
   });
-  //   console.log(result);
+  // console.log(id);
+  // console.log(result);
   return (
     <>
       <h1 className="h1-bold text-dark100_light900">
@@ -22,7 +23,7 @@ const Page = async ({ params, searchParams }: any) => {
 
       <div className="mt-11 w-full">
         <LocalSearchbar
-          route={`/tags/${params.id}`}
+          route={`/tags/${id}`}
           iconPosition="left"
           imgSrc="/assets/icons/search.svg"
           placeholder="Search for tag questions..."
@@ -31,7 +32,7 @@ const Page = async ({ params, searchParams }: any) => {
       </div>
 
       <div className="mt-10 flex w-full flex-col gap-6">
-        {result.questions.length > 0 ? (
+        {result.questions?.length > 0 ? (
           result.questions.map((question: any) => (
             <QuestionCard
               key={question._id}
@@ -59,7 +60,7 @@ const Page = async ({ params, searchParams }: any) => {
 
       <div className="mt-10">
         <Pagination
-          pageNumber={searchParams?.page ? +searchParams.page : 1}
+          pageNumber={sParams?.page ? +sParams.page : 1}
           isNext={result.isNext}
         />
       </div>

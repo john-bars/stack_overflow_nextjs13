@@ -7,20 +7,28 @@ import Votes from "@/components/shared/Votes";
 import { getQuestionById } from "@/lib/actions/question.action";
 import { getUserById } from "@/lib/actions/user.action";
 import { formatNumberWithExtension, getTimestamp } from "@/lib/utils";
-import { auth, getAuth } from "@clerk/nextjs/server";
+import { URLProps } from "@/types";
+import { auth } from "@clerk/nextjs/server";
 import Image from "next/image";
 import Link from "next/link";
 
-const Page = async ({ params, searchParams }: any) => {
-  const result = await getQuestionById({ questionId: params.id });
-
+const Page = async ({ params, searchParams }: URLProps) => {
   const { userId } = await auth();
+  const { id } = await params;
+  const { page = "1", filter } = await searchParams;
+
+  const result = await getQuestionById({ questionId: id });
+
+  // console.log("result: ", result);
 
   // console.log("clerkId: ", userId);
   let mongoUser;
   if (userId) {
     mongoUser = await getUserById({ userId });
   }
+
+  // console.log("userId: ", userId);
+  // console.log("mongoUser: ", mongoUser);
 
   return (
     <>
@@ -100,8 +108,8 @@ const Page = async ({ params, searchParams }: any) => {
         questionId={result._id}
         userId={mongoUser._id}
         totalAnswers={result.answers.length}
-        page={searchParams?.page}
-        filter={searchParams?.filter}
+        page={Number(page)}
+        filter={filter}
       />
 
       <Answer

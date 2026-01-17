@@ -10,9 +10,10 @@ import { auth } from "@clerk/nextjs/server";
 
 export default async function Home({ searchParams }: SearchParamsProps) {
   const { userId } = await auth();
-
+  console.log("auth: :", auth);
   if (!userId) return null;
-  const { q, filter, page = "1" } = await searchParams;
+
+  const { q = "", filter, page = "1" } = await searchParams;
 
   const result = await getSavedQuestions({
     clerkId: userId,

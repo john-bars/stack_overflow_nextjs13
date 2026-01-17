@@ -214,7 +214,7 @@ export function Question({ mongoUserId, questionDetails, type }: Props) {
                 Tags <span className="text-primary-500">*</span>
               </FormLabel>
               <FormControl className="mt-3.5">
-                <>
+                <div>
                   <Input
                     disabled={type === "Edit"}
                     onKeyDown={(e) => handleInputKeyDown(e, field)}
@@ -247,7 +247,7 @@ export function Question({ mongoUserId, questionDetails, type }: Props) {
                       ))}
                     </div>
                   )}
-                </>
+                </div>
               </FormControl>
               <FormDescription className="body-regular mt-2.5 text-light-500">
                 Add up to 3 tags to describe what your question is about. You

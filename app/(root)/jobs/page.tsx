@@ -6,45 +6,50 @@ import {
   fetchJobs,
   fetchLocation,
 } from "@/lib/actions/job.action";
-import { Job } from "@/types";
-import React from "react";
+import { Job, SearchParamsProps } from "@/types";
 
-interface Props {
-  searchParams: {
-    q: string;
-    location: string;
-    page: string;
-  };
-}
+const Page = async ({ searchParams }: SearchParamsProps) => {
+  const [countries, userCountryCode] = await Promise.all([
+    fetchCountries(),
+    fetchLocation(),
+  ]);
+  const countryName = countries.map((c) => c.name.common);
 
-const Page = async ({ searchParams }: Props) => {
-  const countries = await fetchCountries();
-  const userLocation = await fetchLocation();
   const params = await searchParams;
+  const { q, country, page } = params ?? {};
 
-  const jobs = await fetchJobs({
-    query: `${params.q || ""},${params.location || userLocation}`,
-    page: params.page ?? 1,
-  });
+  let jobs: readonly Job[] = [];
+  let error: Error | null = null;
 
+  try {
+    jobs = await fetchJobs({
+      query: q || "developer",
+      country: country || userCountryCode || "ph",
+      page: Number(page) || 1,
+    });
+  } catch (err) {
+    error = err as Error;
+  }
+
+  // console.log(countryName);
+  // console.log(userCountryCode);
   // console.log(jobs);
 
-  const page = parseInt(params.page ?? 1);
   return (
     <>
       <h1 className="h1-bold text-dark100_light900">Jobs</h1>
 
       <div className="flex">
-        <JobsFilter countriesList={countries} />
+        <JobsFilter countriesList={countryName} />
       </div>
 
-      <section className="light-border mb-9 mt-11 flex flex-col gap-9 border-b pb-9">
-        {jobs.length > 0 ? (
-          jobs.map((job: Job) => {
-            if (job.job_title && job.job_title.toLowerCase() !== "undefined")
-              return <JobCard key={job.id} job={job} />;
-            return null;
-          })
+      {/* <section className="light-border mb-9 mt-11 flex flex-col gap-9 border-b pb-9">
+        {!error && jobs?.length > 0 ? (
+          jobs.map((job: Job) =>
+            job.job_title && job.job_title.toLowerCase() !== "undefined" ? (
+              <JobCard key={job.id} job={job} />
+            ) : null
+          )
         ) : (
           <div className="paragraph-regular text-dark200_light800 w-full text-center">
             Oops! We couldn&apos;t find any job at the moment. Please try again
@@ -53,9 +58,9 @@ const Page = async ({ searchParams }: Props) => {
         )}
       </section>
 
-      {jobs.length > 0 && (
-        <Pagination pageNumber={page} isNext={jobs.length === 10} />
-      )}
+      {!error && jobs?.length > 0 && (
+        <Pagination pageNumber={Number(page)} isNext={jobs.length === 10} />
+      )} */}
     </>
   );
 };

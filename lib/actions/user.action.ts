@@ -249,7 +249,7 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
 // GET USER INFO
 export async function getUserInfo(params: GetUserByIdParams) {
   try {
-    connectToDatabase();
+    await connectToDatabase();
 
     const { userId } = params;
 

@@ -15,7 +15,11 @@ import Link from "next/link";
 
 const Page = async ({ params, searchParams }: URLProps) => {
   const { userId: clerkId } = await auth();
-  const userInfo = await getUserInfo({ userId: params.id });
+  const { id } = await params;
+
+  const userInfo = await getUserInfo({ userId: id });
+
+  // console.log("clerkId: ", clerkId);
 
   return (
     <>

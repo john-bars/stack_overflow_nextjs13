@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { HomePageFilters } from "@/constants/filters";
 import { getQuestions } from "@/lib/actions/question.action";
 import { SearchParamsProps } from "@/types";
+import { auth } from "@clerk/nextjs/server";
 import { Metadata } from "next";
 import Link from "next/link";
 
@@ -16,7 +17,8 @@ export const metadata: Metadata = {
 };
 
 export default async function Home({ searchParams }: SearchParamsProps) {
-  const { q, filter, page = "1" } = await searchParams;
+  const { q = "", filter, page = "1" } = await searchParams;
+  const { isAuthenticated } = await auth();
 
   const result = await getQuestions({
     searchQuery: q,
@@ -58,6 +60,7 @@ export default async function Home({ searchParams }: SearchParamsProps) {
         {result.questions.length > 0 ? (
           result.questions.map((question) => (
             <QuestionCard
+              isAuthenticated={isAuthenticated}
               key={question._id}
               _id={question._id}
               title={question.title}

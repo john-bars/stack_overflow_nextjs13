@@ -9,7 +9,7 @@ export interface SidebarLink {
 export interface Job {
   id?: string;
   employer_name?: string;
-  employer_logo?: string | undefined;
+  employer_logo?: string;
   employer_website?: string;
   job_employment_type?: string;
   job_title?: string;
@@ -27,16 +27,18 @@ export interface Country {
 }
 
 export interface ParamsProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
+export type SearchParams = Record<string, string | undefined>;
+
 export interface SearchParamsProps {
-  searchParams: Promise<{ [key: string]: string | undefined }>;
+  searchParams: Promise<SearchParams>;
 }
 
 export interface URLProps {
-  params: { id: string };
-  searchParams: { [key: string]: string | undefined };
+  params: Promise<{ id: string }>;
+  searchParams: Promise<SearchParams>;
 }
 
 export interface BadgeCounts {

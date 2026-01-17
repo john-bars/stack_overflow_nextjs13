@@ -13,8 +13,7 @@ export const metadata: Metadata = {
 };
 
 const Page = async ({ searchParams }: SearchParamsProps) => {
-  const { q, filter, page = "1" } = await searchParams;
-
+  const { q = "", filter, page = "1" } = await searchParams;
   const result = await getAllUsers({
     searchQuery: q,
     filter,
