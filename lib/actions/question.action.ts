@@ -15,7 +15,7 @@ import User from "@/database/user.model";
 import { revalidatePath } from "next/cache";
 import Answer from "@/database/answer.model";
 import Interaction from "@/database/interaction.model";
-// import type { FilterQuery } from "mongoose";
+import { FilterQuery } from "mongoose";
 
 // GET QUESTIONS
 export async function getQuestions(params: GetQuestionsParams) {
