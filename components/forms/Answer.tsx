@@ -76,7 +76,7 @@ const Answer = ({ question, questionId, authorId }: Props) => {
         {
           method: "POST",
           body: JSON.stringify({ question }), // Send the user's question in the request body
-        }
+        },
       );
 
       // Parse the JSON response from the server (AI answer)
@@ -139,12 +139,12 @@ const Answer = ({ question, questionId, authorId }: Props) => {
                   {/* Editor component */}
                   <Editor
                     apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_API_KEY}
-                    onInit={(evt, editor) =>
+                    onInit={(editor: any) =>
                       // @ts-ignore
                       (editorRef.current = editor)
                     }
                     onBlur={field.onBlur}
-                    onEditorChange={(content) => field.onChange(content)}
+                    onEditorChange={(content: any) => field.onChange(content)}
                     initialValue=""
                     init={{
                       height: 350,
