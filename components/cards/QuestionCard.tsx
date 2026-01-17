@@ -11,7 +11,7 @@ interface Answer {
 }
 
 interface QuestionCardProps {
-  isAuthenticated: boolean;
+  isAuthenticated?: boolean;
   _id: string;
   clerkId?: string | null;
   title: string;
