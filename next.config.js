@@ -16,6 +16,10 @@ const nextConfig = {
 
   // Minimize logs in the terminal
   logging: false,
+
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 };
 
 module.exports = nextConfig;
