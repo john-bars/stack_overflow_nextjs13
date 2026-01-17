@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Suspense } from "react";
 
 interface Props {
   countriesList: string[];
@@ -34,13 +35,15 @@ const JobsFilter = ({ countriesList }: Props) => {
 
   return (
     <div className="relative mt-11 flex w-full justify-between gap-5 max-sm:flex-col sm:items-center">
-      <LocalSearchbar
-        route={pathname}
-        iconPosition="left"
-        imgSrc="/assets/icons/job-search.svg"
-        placeholder="Job Title, Company, or Keywords"
-        otherClasses="flex-1 max-sm:w-full"
-      />
+      <Suspense fallback={null}>
+        <LocalSearchbar
+          route={pathname}
+          iconPosition="left"
+          imgSrc="/assets/icons/job-search.svg"
+          placeholder="Job Title, Company, or Keywords"
+          otherClasses="flex-1 max-sm:w-full"
+        />
+      </Suspense>
 
       <Select onValueChange={(value) => handleUpdateParams(value)}>
         <SelectTrigger className="body-regular light-border background-light800_dark300 text-dark500_light700 line-clamp-1 flex min-h-[56px] items-center gap-3 border p-4 sm:max-w-[200px]">

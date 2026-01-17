@@ -7,6 +7,7 @@ import { QuestionFilters } from "@/constants/filters";
 import { getSavedQuestions } from "@/lib/actions/user.action";
 import { SearchParamsProps } from "@/types";
 import { auth } from "@clerk/nextjs/server";
+import { Suspense } from "react";
 
 export default async function Home({ searchParams }: SearchParamsProps) {
   const { userId, isAuthenticated } = await auth();
@@ -30,17 +31,22 @@ export default async function Home({ searchParams }: SearchParamsProps) {
       <h1 className="h1-bold text-dark100_light900">Saved Questions</h1>
 
       <div className="flex-between mt-11 gap-5 max-sm:flex-col">
-        <LocalSearchbar
-          route="/collection"
-          iconPosition="left"
-          imgSrc="/assets/icons/search.svg"
-          placeholder="Search for questions..."
-          otherClasses="flex-1"
-        />
-        <Filter
-          filters={QuestionFilters}
-          otherClasses="sm:min-w-[170px] min-h-[56px]"
-        />
+        <Suspense fallback={null}>
+          <LocalSearchbar
+            route="/collection"
+            iconPosition="left"
+            imgSrc="/assets/icons/search.svg"
+            placeholder="Search for questions..."
+            otherClasses="flex-1"
+          />
+        </Suspense>
+
+        <Suspense fallback={null}>
+          <Filter
+            filters={QuestionFilters}
+            otherClasses="sm:min-w-[170px] min-h-[56px]"
+          />
+        </Suspense>
       </div>
 
       <div className="mt-10 flex w-full flex-col gap-6">
@@ -72,7 +78,9 @@ export default async function Home({ searchParams }: SearchParamsProps) {
       </div>
 
       <div className="mt-10">
-        <Pagination pageNumber={Number(page)} isNext={result.isNext} />
+        <Suspense fallback={null}>
+          <Pagination pageNumber={Number(page)} isNext={result.isNext} />
+        </Suspense>
       </div>
     </>
   );

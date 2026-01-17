@@ -7,6 +7,10 @@ import {
   fetchLocation,
 } from "@/lib/actions/job.action";
 import { Job, SearchParamsProps } from "@/types";
+import { Suspense } from "react";
+// import { error } from "console";
+// import { Suspense } from "react";
+// import page from "../(home)/page";
 
 const Page = async ({ searchParams }: SearchParamsProps) => {
   const [countries, userCountryCode] = await Promise.all([
@@ -15,21 +19,21 @@ const Page = async ({ searchParams }: SearchParamsProps) => {
   ]);
   const countryName = countries.map((c: any) => c.name.common);
 
-  const params = await searchParams;
-  const { q, country, page } = params ?? {};
+  // const params = await searchParams;
+  // const { q, country, page } = params ?? {};
 
-  let jobs: readonly Job[] = [];
-  let error: Error | null = null;
+  // let jobs: readonly Job[] = [];
+  // let error: Error | null = null;
 
-  try {
-    jobs = await fetchJobs({
-      query: q || "developer",
-      country: country || userCountryCode || "ph",
-      page: Number(page) || 1,
-    });
-  } catch (err) {
-    error = err as Error;
-  }
+  // try {
+  //   jobs = await fetchJobs({
+  //     query: q || "developer",
+  //     country: country || userCountryCode || "ph",
+  //     page: Number(page) || 1,
+  //   });
+  // } catch (err) {
+  //   error = err as Error;
+  // }
 
   // console.log(countryName);
   // console.log(userCountryCode);
@@ -40,7 +44,9 @@ const Page = async ({ searchParams }: SearchParamsProps) => {
       <h1 className="h1-bold text-dark100_light900">Jobs</h1>
 
       <div className="flex">
-        <JobsFilter countriesList={countryName} />
+        <Suspense fallback={null}>
+          <JobsFilter countriesList={countryName} />
+        </Suspense>
       </div>
 
       {/* <section className="light-border mb-9 mt-11 flex flex-col gap-9 border-b pb-9">
@@ -48,7 +54,7 @@ const Page = async ({ searchParams }: SearchParamsProps) => {
           jobs.map((job: Job) =>
             job.job_title && job.job_title.toLowerCase() !== "undefined" ? (
               <JobCard key={job.id} job={job} />
-            ) : null
+            ) : null,
           )
         ) : (
           <div className="paragraph-regular text-dark200_light800 w-full text-center">
@@ -59,7 +65,9 @@ const Page = async ({ searchParams }: SearchParamsProps) => {
       </section>
 
       {!error && jobs?.length > 0 && (
-        <Pagination pageNumber={Number(page)} isNext={jobs.length === 10} />
+        <Suspense fallback={null}>
+          <Pagination pageNumber={Number(page)} isNext={jobs.length === 10} />
+        </Suspense>
       )} */}
     </>
   );

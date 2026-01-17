@@ -6,6 +6,7 @@ import { TagFilters } from "@/constants/filters";
 import { getAllTags } from "@/lib/actions/tag.actions";
 import { SearchParamsProps } from "@/types";
 import Link from "next/link";
+import { Suspense } from "react";
 
 const Page = async ({ searchParams }: SearchParamsProps) => {
   const { q = "", filter, page = "1" } = await searchParams;
@@ -22,18 +23,22 @@ const Page = async ({ searchParams }: SearchParamsProps) => {
       <h1 className="h1-bold text-dark100_light900">All Tags</h1>
 
       <div className="flex-between mt-11 gap-5 max-sm:flex-col">
-        <LocalSearchbar
-          route="/tags"
-          iconPosition="left"
-          imgSrc="/assets/icons/search.svg"
-          placeholder="Search for tags"
-          otherClasses="flex-1"
-        />
+        <Suspense fallback={null}>
+          <LocalSearchbar
+            route="/tags"
+            iconPosition="left"
+            imgSrc="/assets/icons/search.svg"
+            placeholder="Search for tags"
+            otherClasses="flex-1"
+          />
+        </Suspense>
 
-        <Filter
-          filters={TagFilters}
-          otherClasses="sm:min-w-[170px] min-h-[56px]"
-        />
+        <Suspense fallback={null}>
+          <Filter
+            filters={TagFilters}
+            otherClasses="sm:min-w-[170px] min-h-[56px]"
+          />
+        </Suspense>
       </div>
 
       <section className="mt-12 flex flex-wrap gap-4">
@@ -71,7 +76,9 @@ const Page = async ({ searchParams }: SearchParamsProps) => {
       </section>
 
       <div className="mt-10">
-        <Pagination pageNumber={Number(page)} isNext={result.isNext} />
+        <Suspense fallback={null}>
+          <Pagination pageNumber={Number(page)} isNext={result.isNext} />
+        </Suspense>
       </div>
     </>
   );

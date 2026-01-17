@@ -11,6 +11,7 @@ import { SearchParamsProps } from "@/types";
 import { auth } from "@clerk/nextjs/server";
 import { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Home | Dev Overflow",
@@ -39,22 +40,29 @@ export default async function Home({ searchParams }: SearchParamsProps) {
       </div>
 
       <div className="flex-between mt-11 gap-5 max-sm:flex-col">
-        <LocalSearchbar
-          route="/"
-          iconPosition="left"
-          imgSrc="/assets/icons/search.svg"
-          placeholder="Search for questions..."
-          otherClasses="flex-1"
-        />
+        <Suspense fallback={null}>
+          <LocalSearchbar
+            route="/"
+            iconPosition="left"
+            imgSrc="/assets/icons/search.svg"
+            placeholder="Search for questions..."
+            otherClasses="flex-1"
+          />
+        </Suspense>
+
         {/* Visible for mobile-medium devices */}
-        <Filter
-          filters={HomePageFilters}
-          containerClasses="hidden max-md:flex" // display as flex for screen size within 768px, hidden for larger device
-          otherClasses="sm:min-w-[170px] min-h-[56px]"
-        />
+        <Suspense fallback={null}>
+          <Filter
+            filters={HomePageFilters}
+            containerClasses="hidden max-md:flex" // display as flex for screen size within 768px, hidden for larger device
+            otherClasses="sm:min-w-[170px] min-h-[56px]"
+          />
+        </Suspense>
       </div>
       {/* Visible for large devices */}
-      <HomeFilters />
+      <Suspense fallback={null}>
+        <HomeFilters />
+      </Suspense>
 
       <div className="mt-10 flex w-full flex-col gap-6">
         {result.questions.length > 0 ? (
@@ -84,7 +92,9 @@ export default async function Home({ searchParams }: SearchParamsProps) {
         )}
       </div>
       <div className="mt-10">
-        <Pagination pageNumber={Number(page)} isNext={result.isNext} />
+        <Suspense fallback={null}>
+          <Pagination pageNumber={Number(page)} isNext={result.isNext} />
+        </Suspense>
       </div>
     </>
   );

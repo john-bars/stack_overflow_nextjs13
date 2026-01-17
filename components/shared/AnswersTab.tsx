@@ -2,6 +2,7 @@ import { getUserAnswers } from "@/lib/actions/user.action";
 import { SearchParamsProps } from "@/types";
 import AnswerCard from "../cards/AnswerCard";
 import Pagination from "./Pagination";
+import { Suspense } from "react";
 
 interface Props extends SearchParamsProps {
   userId: string;
@@ -29,7 +30,9 @@ const AnswersTab = async ({ searchParams, userId, clerkId }: Props) => {
         />
       ))}
       <div className="mt-10 w-full">
-        <Pagination pageNumber={Number(page)} isNext={result.isNextAnswer} />
+        <Suspense fallback={null}>
+          <Pagination pageNumber={Number(page)} isNext={result.isNextAnswer} />
+        </Suspense>
       </div>
     </>
   );

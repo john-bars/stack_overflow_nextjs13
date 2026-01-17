@@ -4,6 +4,7 @@ import Pagination from "@/components/shared/Pagination";
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
 import { getQuestionsByTagId } from "@/lib/actions/tag.actions";
 import { URLProps } from "@/types";
+import { Suspense } from "react";
 
 const Page = async ({ params, searchParams }: URLProps) => {
   const { q, page } = await searchParams;
@@ -23,13 +24,15 @@ const Page = async ({ params, searchParams }: URLProps) => {
       </h1>
 
       <div className="mt-11 w-full">
-        <LocalSearchbar
-          route={`/tags/${id}`}
-          iconPosition="left"
-          imgSrc="/assets/icons/search.svg"
-          placeholder="Search for tag questions..."
-          otherClasses="flex-1"
-        />
+        <Suspense fallback={null}>
+          <LocalSearchbar
+            route={`/tags/${id}`}
+            iconPosition="left"
+            imgSrc="/assets/icons/search.svg"
+            placeholder="Search for tag questions..."
+            otherClasses="flex-1"
+          />
+        </Suspense>
       </div>
 
       <div className="mt-10 flex w-full flex-col gap-6">
@@ -60,7 +63,9 @@ const Page = async ({ params, searchParams }: URLProps) => {
       </div>
 
       <div className="mt-10">
-        <Pagination pageNumber={Number(page) || 1} isNext={result.isNext} />
+        <Suspense fallback={null}>
+          <Pagination pageNumber={Number(page) || 1} isNext={result.isNext} />
+        </Suspense>
       </div>
     </>
   );

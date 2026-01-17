@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import Filter from "./Filter";
 import { AnswerFilters } from "@/constants/filters";
 import { getAnswers } from "@/lib/actions/answer.action";
@@ -36,8 +36,9 @@ const AllAnswers = async ({
         <h3 className="primary-text-gradient">
           {totalAnswers} {totalAnswers <= 1 ? "Answer" : "Answers"}
         </h3>
-
-        <Filter filters={AnswerFilters} />
+        <Suspense fallback={null}>
+          <Filter filters={AnswerFilters} />
+        </Suspense>
       </div>
       <div>
         {result.answers.map((answer) => (
@@ -84,10 +85,12 @@ const AllAnswers = async ({
       </div>
 
       <div className="mt-10">
-        <Pagination
-          pageNumber={page ? +page : 1}
-          isNext={result.isNextAnswer}
-        />
+        <Suspense fallback={null}>
+          <Pagination
+            pageNumber={page ? +page : 1}
+            isNext={result.isNextAnswer}
+          />
+        </Suspense>
       </div>
     </div>
   );
