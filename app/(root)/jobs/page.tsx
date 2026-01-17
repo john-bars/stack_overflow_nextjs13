@@ -13,7 +13,7 @@ const Page = async ({ searchParams }: SearchParamsProps) => {
     fetchCountries(),
     fetchLocation(),
   ]);
-  const countryName = countries.map((c) => c.name.common);
+  const countryName = countries.map((c: any) => c.name.common);
 
   const params = await searchParams;
   const { q, country, page } = params ?? {};
