@@ -15,7 +15,7 @@ import User from "@/database/user.model";
 import { revalidatePath } from "next/cache";
 import Answer from "@/database/answer.model";
 import Interaction from "@/database/interaction.model";
-import { FilterQuery } from "mongoose";
+// import type { FilterQuery } from "mongoose";
 
 // GET QUESTIONS
 export async function getQuestions(params: GetQuestionsParams) {
@@ -93,7 +93,7 @@ export async function createQuestion(params: CreateQuestionParams) {
       const existingTag = await Tag.findOneAndUpdate(
         { name: { $regex: new RegExp(`^${tag}$`, "i") } },
         { $setOnInsert: { name: tag }, $push: { questions: question._id } }, // update
-        { upsert: true, new: true } // options
+        { upsert: true, new: true }, // options
       );
 
       tagDocuments.push(existingTag._id);
@@ -248,7 +248,7 @@ export async function deleteQuestion(params: DeleteQuestionParams) {
     // remove the questionId in the questions[] of tags
     await Tag.updateMany(
       { questions: questionId },
-      { $pull: { questions: questionId } }
+      { $pull: { questions: questionId } },
     );
 
     revalidatePath(path);
