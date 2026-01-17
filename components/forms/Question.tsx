@@ -86,7 +86,7 @@ export function Question({ mongoUserId, questionDetails, type }: Props) {
   // Add a tag
   const handleInputKeyDown = (
     e: React.KeyboardEvent<HTMLInputElement>,
-    field: any
+    field: any,
   ) => {
     if (e.key === "Enter" && field.name === "tags") {
       e.preventDefault(); // prevent the page from reloading upon submit
@@ -161,12 +161,12 @@ export function Question({ mongoUserId, questionDetails, type }: Props) {
                 <Editor
                   key={mode} // remount when mode changes
                   apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_API_KEY}
-                  onInit={(evt, editor) =>
+                  onInit={(editor: any) =>
                     // @ts-ignore
                     (editorRef.current = editor)
                   }
                   onBlur={field.onBlur}
-                  onEditorChange={(content) => field.onChange(content)}
+                  onEditorChange={(content: any) => field.onChange(content)}
                   initialValue={parsedQuestionDetails?.content || ""}
                   init={{
                     height: 350,
