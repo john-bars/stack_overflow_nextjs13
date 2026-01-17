@@ -9,8 +9,7 @@ import { SearchParamsProps } from "@/types";
 import { auth } from "@clerk/nextjs/server";
 
 export default async function Home({ searchParams }: SearchParamsProps) {
-  const { userId } = await auth();
-  console.log("auth: :", auth);
+  const { userId, isAuthenticated } = await auth();
   if (!userId) return null;
 
   const { q = "", filter, page = "1" } = await searchParams;
@@ -21,8 +20,10 @@ export default async function Home({ searchParams }: SearchParamsProps) {
     filter,
     page: Number(page),
   });
+
   // console.log(result);
   // console.log("searchParams: ", searchParams);
+  // console.log("isAuthenticated: ", isAuthenticated);
 
   return (
     <>
@@ -46,6 +47,7 @@ export default async function Home({ searchParams }: SearchParamsProps) {
         {result.questions.length > 0 ? (
           result.questions.map((question: any) => (
             <QuestionCard
+              isAuthenticated={isAuthenticated}
               key={question._id}
               _id={question._id}
               title={question.title}
