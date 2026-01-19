@@ -34,6 +34,7 @@ module.exports = {
           300: "#151821",
           400: "#212734",
           500: "#101012",
+          "400Hover": "#2a2e3a",
         },
         light: {
           900: "#FFFFFF",
@@ -42,6 +43,7 @@ module.exports = {
           700: "#DCE3F1",
           500: "#7B8EC8",
           400: "#858EAD",
+          "900Hover": "#f0f0f0",
         },
         "accent-blue": "#1DA1F2",
       },
