@@ -41,8 +41,10 @@ const GlobalSearch = () => {
   // Change the URL with 'global' search query
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
+      const currentQuery = searchParams.get("global") || "";
+
       // If 'search' is not empty, update the URL and trigger a search
-      if (search) {
+      if (search && search !== currentQuery) {
         const newUrl = formUrlQuery({
           params: searchParams.toString(),
           key: "global",
@@ -51,7 +53,7 @@ const GlobalSearch = () => {
         router.push(newUrl, { scroll: false });
       } else {
         // if there's no 'query', remove the query key 'global' and the 'type' from the URL
-        if (!query) {
+        if (!search && currentQuery) {
           const newUrl = removeKeyFromQuery({
             params: searchParams.toString(),
             keysToRemove: ["global", "type"],
@@ -59,10 +61,10 @@ const GlobalSearch = () => {
           router.push(newUrl, { scroll: false });
         }
       }
-    }, 300); // Set up a 300ms delay for debouncing to prevent frequent updates
+    }, 1000); // Set up a 1 second delay for debouncing to prevent frequent updates
 
     return () => clearTimeout(delayDebounceFn);
-  }, [search, router, pathname, searchParams, query]);
+  }, [search, router, searchParams]);
 
   return (
     <div

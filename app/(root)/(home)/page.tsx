@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { HomePageFilters } from "@/constants/filters";
 import { getQuestions } from "@/lib/actions/question.action";
 import { SearchParamsProps } from "@/types";
-import { auth } from "@clerk/nextjs/server";
+
 import { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -19,14 +19,13 @@ export const metadata: Metadata = {
 
 export default async function Home({ searchParams }: SearchParamsProps) {
   const { q = "", filter, page = "1" } = await searchParams;
-  const { isAuthenticated } = await auth();
 
   const result = await getQuestions({
     searchQuery: q,
     filter,
     page: Number(page),
   });
-  // console.log(result);
+  console.log(result.questions[0]);
 
   return (
     <>
@@ -40,35 +39,29 @@ export default async function Home({ searchParams }: SearchParamsProps) {
       </div>
 
       <div className="flex-between mt-11 gap-5 max-sm:flex-col">
-        <Suspense fallback={null}>
-          <LocalSearchbar
-            route="/"
-            iconPosition="left"
-            imgSrc="/assets/icons/search.svg"
-            placeholder="Search for questions..."
-            otherClasses="flex-1"
-          />
-        </Suspense>
+        <LocalSearchbar
+          route="/"
+          iconPosition="left"
+          imgSrc="/assets/icons/search.svg"
+          placeholder="Search for questions..."
+          otherClasses="flex-1"
+        />
 
         {/* Visible for mobile-medium devices */}
-        <Suspense fallback={null}>
-          <Filter
-            filters={HomePageFilters}
-            containerClasses="hidden max-md:flex" // display as flex for screen size within 768px, hidden for larger device
-            otherClasses="sm:min-w-[170px] min-h-[56px]"
-          />
-        </Suspense>
+        <Filter
+          filters={HomePageFilters}
+          containerClasses="hidden max-md:flex" // display as flex for screen size within 768px, hidden for larger device
+          otherClasses="sm:min-w-[170px] min-h-[56px]"
+        />
       </div>
+
       {/* Visible for large devices */}
-      <Suspense fallback={null}>
-        <HomeFilters />
-      </Suspense>
+      <HomeFilters />
 
       <div className="mt-10 flex w-full flex-col gap-6">
         {result.questions.length > 0 ? (
           result.questions.map((question) => (
             <QuestionCard
-              isAuthenticated={isAuthenticated}
               key={question._id}
               _id={question._id}
               title={question.title}
@@ -91,11 +84,19 @@ export default async function Home({ searchParams }: SearchParamsProps) {
           />
         )}
       </div>
+
       <div className="mt-10">
-        <Suspense fallback={null}>
-          <Pagination pageNumber={Number(page)} isNext={result.isNext} />
-        </Suspense>
+        <Pagination pageNumber={Number(page)} isNext={result.isNext} />
       </div>
+
+      <NoResult
+        title="There's no question to show"
+        description="Be the first to break the silence! Ask a Question and kickstart the
+            discussion. Our query could be the next big thing others learn from. Get
+            involved!"
+        link="/ask-question"
+        linkTitle="Ask a Question"
+      />
     </>
   );
 }

@@ -1,9 +1,12 @@
+// "use client";
+
 import Link from "next/link";
 import RenderTag from "../shared/RenderTag";
 import Metric from "../shared/Metric";
 import { formatNumberWithExtension, getTimestamp } from "@/lib/utils";
-import { SignedIn } from "@clerk/nextjs";
+// import { SignedIn } from "@clerk/nextjs";
 import EditDeleteAction from "../shared/EditDeleteAction";
+import { useSession } from "next-auth/react";
 
 interface Answer {
   answerId: string;
@@ -13,10 +16,9 @@ interface Answer {
 interface QuestionCardProps {
   isAuthenticated?: boolean;
   _id: string;
-  clerkId?: string | null;
   title: string;
   tags: { _id: string; name: string }[];
-  author: { _id: string; name: string; picture: string; clerkId: string };
+  author: { id: string; name: string; picture: string };
   upvotes: string[];
   views: number;
   answers: Answer[];
@@ -26,7 +28,6 @@ interface QuestionCardProps {
 const QuestionCard = ({
   isAuthenticated,
   _id,
-  clerkId,
   title,
   tags,
   author,
@@ -35,7 +36,10 @@ const QuestionCard = ({
   answers,
   createdAt,
 }: QuestionCardProps) => {
-  const showActionButtons = clerkId && clerkId === author.clerkId;
+  // const { data: session } = useSession();
+  console.log(author);
+
+  // const showActionButtons = session?.user?.id === author.id;
 
   return (
     <div className="card-wrapper rounded-xl p-9 sm:px-11">
@@ -60,11 +64,11 @@ const QuestionCard = ({
           )}
         </div>
 
-        <SignedIn>
+        {/* <SignedIn>
           {showActionButtons && (
             <EditDeleteAction type="Question" itemId={JSON.stringify(_id)} />
           )}
-        </SignedIn>
+        </SignedIn> */}
       </div>
 
       {/* Display Tags */}
@@ -81,7 +85,7 @@ const QuestionCard = ({
           alt="user"
           value={author.name}
           title={` - asked ${getTimestamp(createdAt)}`}
-          href={`/profile/${author.clerkId}`} // the params.id used is 'clerkId', not the '_id'
+          // href={`/profile/${author.clerkId}`} // the params.id used is 'clerkId', not the '_id'
           isAuthor
           textStyles="body-medium text-dark400_light700"
         />

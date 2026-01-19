@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { formUrlQuery, removeKeyFromQuery } from "@/lib/utils";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface LocalSearchbarProps {
   route: string;
@@ -25,12 +25,24 @@ const LocalSearchbar = ({
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const query = searchParams.get("q");
-  const [search, setSearch] = useState(query || "");
+  // const query = searchParams.get("q");
+  const initialQuery = searchParams.get("q") ?? "";
+  const [search, setSearch] = useState(initialQuery);
+  const mountedRef = useRef(false);
 
   useEffect(() => {
-    // Set up a timer to wait for 300 milliseconds after the last change in 'search'
+    // Prevent running on first render
+    if (!mountedRef.current) {
+      mountedRef.current = true;
+      return;
+    }
+
     const delayDebounceFn = setTimeout(() => {
+      const currentQuery = searchParams.get("q") ?? "";
+
+      // Prevent unecessary navigation
+      if (search === currentQuery) return;
+
       // If 'search' is not empty, update the URL and trigger a search
       if (search) {
         const newUrl = formUrlQuery({
@@ -39,28 +51,26 @@ const LocalSearchbar = ({
           value: search,
         });
 
-        router.push(newUrl, { scroll: false });
-      } else {
+        router.replace(newUrl, { scroll: false });
+      } else if (pathname === route) {
         // if 'search' is empty, remove the query key 'q'
-        if (pathname === route) {
-          const newUrl = removeKeyFromQuery({
-            params: searchParams.toString(),
-            keysToRemove: ["q"],
-          });
-          router.push(newUrl, { scroll: false });
-        }
+        const newUrl = removeKeyFromQuery({
+          params: searchParams.toString(),
+          keysToRemove: ["q"],
+        });
+
+        router.replace(newUrl, { scroll: false });
       }
     }, 300);
 
-    // Cleanup function to clear the timeout when the effect dependencies change
-    return () => clearTimeout(delayDebounceFn); // Clear the timeout when the component unmounts or when dependencies change
-  }, [search, route, pathname, router, searchParams, query]);
+    return () => clearTimeout(delayDebounceFn);
+  }, [search, route, pathname, router]);
 
   return (
     <div
       className={`background-light800_darkgradient flex min-h-[56px] w-full grow items-center gap-4 rounded-xl px-4 ${otherClasses}`}
     >
-      {iconPosition === "left" && (
+      {iconPosition === "left" && imgSrc && (
         <Image
           src={imgSrc}
           alt="search icon"
@@ -78,7 +88,7 @@ const LocalSearchbar = ({
         className="paragraph-regular text-dark400_light700 no-focus placeholder border-none  bg-transparent shadow-none outline-none"
       />
 
-      {iconPosition === "right" && (
+      {iconPosition === "right" && imgSrc && (
         <Image
           src={imgSrc}
           alt="search icon"

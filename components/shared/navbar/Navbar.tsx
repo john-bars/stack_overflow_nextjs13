@@ -1,12 +1,17 @@
-import { SignedIn, UserButton } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
-import React, { Suspense } from "react";
 import Theme from "./Theme";
 import MobileNav from "./MobileNav";
 import GlobalSearch from "../search/GlobalSearch";
 
-const Navbar = () => {
+interface NavbarProps {
+  session?: any;
+}
+
+const Navbar = ({ session }: NavbarProps) => {
+  const avatar = session?.user?.image ?? "/avatar.png";
+  // console.log("session: ", session);
+
   return (
     <nav className="flex-between background-light900_dark200 fixed z-50 w-full gap-5 p-6 shadow-light-300 dark:shadow-none sm:px-12">
       <Link href="/" className="flex items-center gap-1">
@@ -22,20 +27,21 @@ const Navbar = () => {
           <span className="text-primary-500">Overflow</span>
         </p>
       </Link>
-      <Suspense fallback={null}>
-        <GlobalSearch />
-      </Suspense>
+
+      <GlobalSearch />
+
       <div className="flex-between gap-5">
         <Theme />
-        <SignedIn>
-          <UserButton
-            afterSignOutUrl="/"
-            appearance={{
-              elements: { avatarBox: "h-10 w-10" },
-              variables: { colorPrimary: "#ff7000" },
-            }}
+        {session && (
+          <Image
+            src={avatar}
+            className="h-10 w-10 rounded-full cursor-pointer"
+            width={40}
+            height={40}
+            alt="Avatar"
           />
-        </SignedIn>
+        )}
+
         <MobileNav />
       </div>
     </nav>

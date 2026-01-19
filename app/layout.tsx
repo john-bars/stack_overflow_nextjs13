@@ -1,12 +1,9 @@
-/* eslint-disable camelcase */
-import React from "react";
-import { ClerkProvider } from "@clerk/nextjs";
 import { Inter, Space_Grotesk } from "next/font/google";
 import type { Metadata } from "next";
-
 import "./globals.css";
 import "@/styles/prism.css";
-import { ThemeProvider } from "@/context/ThemeProvider";
+
+import Providers from "./(root)/providers";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -29,7 +26,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -39,16 +36,7 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${spaceGrotesk.variable} background-light900_dark200`}
       >
-        <ClerkProvider
-          appearance={{
-            elements: {
-              formButtonPrimary: "primary-gradient",
-              footerActionLink: "primary-text-gradient hover:text-primary-500",
-            },
-          }}
-        >
-          <ThemeProvider>{children}</ThemeProvider>
-        </ClerkProvider>
+        {children}
       </body>
     </html>
   );
