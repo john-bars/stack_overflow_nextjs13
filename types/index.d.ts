@@ -33,7 +33,7 @@ export interface ParamsProps {
 export type SearchParams = Record<string, string | undefined>;
 
 export interface SearchParamsProps {
-  searchParams: Promise<SearchParams>;
+  searchParams: searchParams;
 }
 
 export interface URLProps {

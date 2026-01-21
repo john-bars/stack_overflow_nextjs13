@@ -6,6 +6,8 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { toast } from "../ui/use-toast";
 
+type ActionType = "Question" | "Answer";
+type DeleteFn<T> = (params: T) => Promise<void>;
 interface Props {
   type: string;
   itemId: string;
@@ -16,34 +18,28 @@ const EditDeleteAction = ({ type, itemId }: Props) => {
   const router = useRouter();
 
   const handleEdit = () => {
-    router.push(`/question/edit/${JSON.parse(itemId)}`);
+    router.push(`/question/edit/${itemId}`);
   };
 
-  // Common function for deleting an entity with confirmation, success, and error handling
-  const deleteEntity = async (
-    deleteFunction: Function,
-    params: any,
+  const deleteEntity = async <T,>(
+    deleteFunction: DeleteFn<T>,
+    params: T,
     successTitle: string,
-    errorTitle: string
+    errorTitle: string,
   ) => {
     // Ask for confirmation before deletion
-    const confirmed = window.confirm(`Do you want to delete the ${type}?`);
+    if (!window.confirm(`Do you want to delete the ${type}?`)) return;
 
-    if (confirmed) {
-      try {
-        await deleteFunction(params);
-        toast({
-          title: successTitle,
-        });
-      } catch (error: any) {
-        toast({
-          title: errorTitle,
-          description: error.message || "An error occurred during deletion.",
-        });
-      }
-    } else {
+    try {
+      await deleteFunction(params);
+      router.refresh();
       toast({
-        title: "Deletion canceled",
+        title: successTitle,
+      });
+    } catch (error: any) {
+      toast({
+        title: errorTitle,
+        description: error?.message ?? "An error occurred during deletion.",
       });
     }
   };
@@ -51,25 +47,25 @@ const EditDeleteAction = ({ type, itemId }: Props) => {
   const handleDelete = async () => {
     if (type === "Question") {
       const params = {
-        questionId: JSON.parse(itemId),
+        questionId: itemId,
         path: pathname,
       };
       await deleteEntity(
         deleteQuestion,
         params,
         "Question deleted successfully",
-        "Error deleting the question"
+        "Error deleting the question",
       );
     } else if (type === "Answer") {
       const params = {
-        answerId: JSON.parse(itemId),
+        answerId: itemId,
         path: pathname,
       };
       await deleteEntity(
         deleteAnswer,
         params,
         "Answer deleted successfully",
-        "Error deleting the answer"
+        "Error deleting the answer",
       );
     }
   };

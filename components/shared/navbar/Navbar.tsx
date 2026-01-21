@@ -3,6 +3,7 @@ import Link from "next/link";
 import Theme from "./Theme";
 import MobileNav from "./MobileNav";
 import GlobalSearch from "../search/GlobalSearch";
+import UserMenu from "./UserMenu";
 
 interface NavbarProps {
   session?: any;
@@ -32,15 +33,7 @@ const Navbar = ({ session }: NavbarProps) => {
 
       <div className="flex-between gap-5">
         <Theme />
-        {session && (
-          <Image
-            src={avatar}
-            className="h-10 w-10 rounded-full cursor-pointer"
-            width={40}
-            height={40}
-            alt="Avatar"
-          />
-        )}
+        {session && <UserMenu />}
 
         <MobileNav />
       </div>

@@ -1,3 +1,4 @@
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import AnswersTab from "@/components/shared/AnswersTab";
 import ProfileLink from "@/components/shared/ProfileLink";
 import QuestionTab from "@/components/shared/QuestionTab";
@@ -9,17 +10,17 @@ import { getUserInfo } from "@/lib/actions/user.action";
 import { getJoinedDate } from "@/lib/utils";
 import { URLProps } from "@/types";
 import { SignedIn } from "@clerk/nextjs";
-import { auth } from "@clerk/nextjs/server";
+
+import { getServerSession } from "next-auth";
 import Image from "next/image";
 import Link from "next/link";
+import { userInfo } from "os";
 
 const Page = async ({ params, searchParams }: URLProps) => {
-  const { userId: clerkId } = await auth();
+  const session = await getServerSession(authOptions);
+  const userId = session?.user?.id;
   const { id } = await params;
-
   const userInfo = await getUserInfo({ userId: id });
-
-  // console.log("clerkId: ", clerkId);
 
   return (
     <>
@@ -71,15 +72,13 @@ const Page = async ({ params, searchParams }: URLProps) => {
         </div>
 
         <div className="absolute right-0 top-0">
-          <SignedIn>
-            {clerkId === userInfo.user.clerkId && (
-              <Link href="/profile/edit">
-                <Button className="paragraph-medium btn-secondary text-dark300_light900 min-h-[46px] min-w-[140px] px-4 py-3 sm:min-w-[175px]">
-                  Edit Profile
-                </Button>
-              </Link>
-            )}
-          </SignedIn>
+          {userId === userInfo.user._id && (
+            <Link href="/profile/edit">
+              <Button className="paragraph-medium btn-secondary text-dark300_light900 min-h-[46px] min-w-[140px] px-4 py-3 sm:min-w-[175px]">
+                Edit Profile
+              </Button>
+            </Link>
+          )}
         </div>
       </div>
 
@@ -103,14 +102,14 @@ const Page = async ({ params, searchParams }: URLProps) => {
             <QuestionTab
               searchParams={searchParams}
               userId={userInfo.user._id}
-              clerkId={clerkId}
+              currentUserId={userId ?? null}
             />
           </TabsContent>
           <TabsContent value="answers" className="flex w-full flex-col gap-6">
             <AnswersTab
               searchParams={searchParams}
               userId={userInfo.user._id}
-              clerkId={clerkId}
+              currentUserId={userId ?? null}
             />
           </TabsContent>
         </Tabs>

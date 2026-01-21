@@ -5,31 +5,35 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "../ui/button";
-import { SignedOut, useAuth } from "@clerk/nextjs";
+import { useSession } from "next-auth/react";
+// import { SignedOut, useAuth } from "@clerk/nextjs";
 
 const LeftSidebar = () => {
-  const { userId } = useAuth();
   const pathname = usePathname();
+  const { data: session, status } = useSession();
+
+  const userId = session?.user?.id;
+  const isSignedIn = status === "authenticated";
+
+  // console.log("useSession: ", session);
 
   return (
     <section className="background-light900_dark200 light-border custom-scrollbar sticky inset-y-0 left-0 flex h-screen w-[101px] shrink-0 flex-col justify-between overflow-y-auto border-r p-6 pt-36 shadow-light-300 dark:shadow-none max-sm:hidden lg:w-64">
       <div className="flex flex-1 flex-col gap-6">
         {sidebarLinks.map((item) => {
-          const isActive =
-            (pathname.includes(item.route) && item.route.length > 1) ||
-            pathname === item.route;
+          const href =
+            item.route === "/profile" && userId
+              ? `/profile/${userId}`
+              : item.route;
 
-          if (item.route === "/profile") {
-            if (userId) {
-              item.route = `${item.route}/${userId}`;
-            } else {
-              return null;
-            }
-          }
+          if (item.route === "/profile" && !userId) return null;
+
+          const isActive =
+            (pathname.includes(href) && href.length > 1) || pathname === href;
 
           return (
             <Link
-              href={item.route}
+              href={href}
               key={item.label}
               className={`${
                 isActive
@@ -56,7 +60,7 @@ const LeftSidebar = () => {
         })}
       </div>
 
-      <SignedOut>
+      {!isSignedIn && (
         <div className="flex flex-col gap-3">
           <Link href="/sign-in">
             <Button className="small-medium btn-secondary min-h-[41px] w-full rounded-lg px-4 py-3 shadow-none">
@@ -86,7 +90,7 @@ const LeftSidebar = () => {
             </Button>
           </Link>
         </div>
-      </SignedOut>
+      )}
     </section>
   );
 };

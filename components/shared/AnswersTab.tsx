@@ -3,30 +3,38 @@ import { SearchParamsProps } from "@/types";
 import AnswerCard from "../cards/AnswerCard";
 import Pagination from "./Pagination";
 import { Suspense } from "react";
+import Answer from "@/database/answer.model";
 
 interface Props extends SearchParamsProps {
   userId: string;
-  clerkId: string | null;
+  currentUserId: string | null;
 }
 
-const AnswersTab = async ({ searchParams, userId, clerkId }: Props) => {
+const AnswersTab = async ({ searchParams, userId, currentUserId }: Props) => {
   const { page = "1" } = await searchParams;
   const result = await getUserAnswers({
     userId,
     page: Number(page),
   });
-  // console.log("userAnswers: ", result);
+  console.log("userAnswers: ", result);
   return (
     <>
-      {result.answers.map((item) => (
+      {result.answers.map((answer) => (
         <AnswerCard
-          key={item._id}
-          _id={item._id}
-          clerkId={clerkId}
-          question={item.question}
-          author={item.author}
-          upvotes={item.upvotes.length}
-          createdAt={item.createdAt}
+          key={answer._id.toString()}
+          _id={answer._id.toString()}
+          currentUserId={currentUserId}
+          question={{
+            _id: answer.question._id.toString(),
+            title: answer.question.title,
+          }}
+          author={{
+            _id: answer.author._id.toString(),
+            name: answer.author.name,
+            picture: answer.author.picture,
+          }}
+          upvotes={answer.upvotes.length}
+          createdAt={answer.createdAt.toISOString()}
         />
       ))}
       <div className="mt-10 w-full">

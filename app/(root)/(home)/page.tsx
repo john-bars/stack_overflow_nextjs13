@@ -25,7 +25,6 @@ export default async function Home({ searchParams }: SearchParamsProps) {
     filter,
     page: Number(page),
   });
-  console.log(result.questions[0]);
 
   return (
     <>

@@ -6,9 +6,9 @@ import { Suspense } from "react";
 
 interface Props extends SearchParamsProps {
   userId: string;
-  clerkId: string | null;
+  currentUserId: string | null;
 }
-const QuestionTab = async ({ searchParams, userId, clerkId }: Props) => {
+const QuestionTab = async ({ searchParams, userId, currentUserId }: Props) => {
   const { page = "1" } = await searchParams;
   const result = await getUserQuestions({
     userId,
@@ -18,12 +18,11 @@ const QuestionTab = async ({ searchParams, userId, clerkId }: Props) => {
   return (
     <>
       {result.questions.map((question) => {
-        // console.log(question);
         return (
           <QuestionCard
             key={question._id}
             _id={question._id}
-            clerkId={clerkId}
+            currentUserId={currentUserId}
             title={question.title}
             tags={question.tags}
             author={question.author}

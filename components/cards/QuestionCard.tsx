@@ -1,12 +1,8 @@
-// "use client";
-
 import Link from "next/link";
 import RenderTag from "../shared/RenderTag";
 import Metric from "../shared/Metric";
 import { formatNumberWithExtension, getTimestamp } from "@/lib/utils";
-// import { SignedIn } from "@clerk/nextjs";
 import EditDeleteAction from "../shared/EditDeleteAction";
-import { useSession } from "next-auth/react";
 
 interface Answer {
   answerId: string;
@@ -15,6 +11,7 @@ interface Answer {
 
 interface QuestionCardProps {
   isAuthenticated?: boolean;
+  currentUserId?: string | null;
   _id: string;
   title: string;
   tags: { _id: string; name: string }[];
@@ -27,6 +24,7 @@ interface QuestionCardProps {
 
 const QuestionCard = ({
   isAuthenticated,
+  currentUserId,
   _id,
   title,
   tags,
@@ -36,10 +34,9 @@ const QuestionCard = ({
   answers,
   createdAt,
 }: QuestionCardProps) => {
-  // const { data: session } = useSession();
-  console.log(author);
-
-  // const showActionButtons = session?.user?.id === author.id;
+  const showActionButtons = currentUserId && currentUserId === author.id;
+  // console.log("currentUserId: ", currentUserId);
+  // console.log("authorId: ", author.id);
 
   return (
     <div className="card-wrapper rounded-xl p-9 sm:px-11">
@@ -64,11 +61,9 @@ const QuestionCard = ({
           )}
         </div>
 
-        {/* <SignedIn>
-          {showActionButtons && (
-            <EditDeleteAction type="Question" itemId={JSON.stringify(_id)} />
-          )}
-        </SignedIn> */}
+        {showActionButtons && (
+          <EditDeleteAction type="Question" itemId={`${_id}`} />
+        )}
       </div>
 
       {/* Display Tags */}
@@ -82,32 +77,32 @@ const QuestionCard = ({
       <div className="flex-between mt-6 w-full flex-wrap gap-3">
         <Metric
           imgUrl={author.picture}
-          alt="user"
+          alt="User Profile"
           value={author.name}
           title={` - asked ${getTimestamp(createdAt)}`}
-          // href={`/profile/${author.clerkId}`} // the params.id used is 'clerkId', not the '_id'
+          href={`/profile/${author.id}`}
           isAuthor
           textStyles="body-medium text-dark400_light700"
         />
         <div className="flex-between gap-3">
           <Metric
             imgUrl="/assets/icons/like.svg"
-            alt="Upvotes"
-            value={formatNumberWithExtension(upvotes.length)}
+            alt="Upvotes icon"
+            value={formatNumberWithExtension(upvotes?.length ?? 0)}
             title="Votes"
             textStyles="small-medium text-dark400_light800"
           />
           <Metric
             imgUrl="/assets/icons/message.svg"
-            alt="message"
-            value={formatNumberWithExtension(answers.length)}
+            alt="Answers icon"
+            value={formatNumberWithExtension(answers?.length ?? 0)}
             title=" Answers"
             textStyles="small-medium text-dark400_light800"
           />
           <Metric
             imgUrl="/assets/icons/eye.svg"
-            alt="eye"
-            value={formatNumberWithExtension(views)}
+            alt="Views icon"
+            value={formatNumberWithExtension(views ?? 0)}
             title=" Views"
             textStyles="small-medium text-dark400_light800"
           />

@@ -19,6 +19,7 @@ import Tag from "@/database/tag.model";
 import Answer from "@/database/answer.model";
 import { BadgeCriteriaType } from "@/types";
 import { assignBadges } from "../utils";
+import Question from "@/database/question.model";
 
 // get the user with a clerkId equall to userId
 export async function getUserById(params: any) {
@@ -169,14 +170,14 @@ export async function toggleSaveQuestion(params: ToggleSaveQuestionParams) {
         {
           $pull: { saved: questionId },
         },
-        { new: true } // return the new/latest value
+        { new: true }, // return the new/latest value
       );
     } else {
       // add the question to saved[]
       await User.findByIdAndUpdate(
         userId,
         { $addToSet: { saved: questionId } },
-        { new: true }
+        { new: true },
       );
     }
 
@@ -253,63 +254,29 @@ export async function getUserInfo(params: GetUserByIdParams) {
 
     const { userId } = params;
 
-    const user = await User.findOne({ clerkId: userId });
+    // Lookup by NextAuth user ID
+    const user = await User.findOne({ id: userId });
 
-    if (!user) {
-      throw new Error("User not found");
-    }
+    if (!user) throw new Error("User not found");
 
     const totalQuestions = await Question.countDocuments({ author: user._id });
     const totalAnswers = await Answer.countDocuments({ author: user._id });
 
-    // Calculate the total number of upvotes for questions authored by a particular user
-    const [questionUpvotes] = await Question.aggregate([
-      // Stage 1: Filter questions by the author's user ID
+    const [questionUpvotes = { totalUpvotes: 0 }] = await Question.aggregate([
       { $match: { author: user._id } },
-
-      // Stage 2: Project a new field 'upvotes' representing the number of upvotes for each question
-      {
-        $project: {
-          _id: 0, // exclude the '_id' field in the result
-          upvotes: { $size: "$upvotes" }, // Calculate the size of the 'upvotes' array
-        },
-      },
-
-      // Stage 3: Group all filtered documents and sum up the 'upvotes' field
-      {
-        $group: {
-          _id: null, // Group all documents together (no specific criteria)
-          totalUpvotes: { $sum: "$upvotes" }, // Calculate the sum of 'upvotes' across all grouped documents
-        },
-      },
+      { $project: { _id: 0, upvotes: { $size: "$upvotes" } } },
+      { $group: { _id: null, totalUpvotes: { $sum: "$upvotes" } } },
     ]);
 
-    // Calculate the total number of upvotes for answers authored by a particular user
-    const [answerUpvotes] = await Answer.aggregate([
+    const [answerUpvotes = { totalUpvotes: 0 }] = await Answer.aggregate([
       { $match: { author: user._id } },
-      {
-        $project: {
-          _id: 0,
-          upvotes: { $size: "$upvotes" },
-        },
-      },
-      {
-        $group: {
-          _id: null,
-          totalUpvotes: { $sum: "$upvotes" },
-        },
-      },
+      { $project: { _id: 0, upvotes: { $size: "$upvotes" } } },
+      { $group: { _id: null, totalUpvotes: { $sum: "$upvotes" } } },
     ]);
 
-    // Calculate the total number of views for answers authored by a particular user
-    const [questionViews] = await Answer.aggregate([
+    const [questionViews = { totalViews: 0 }] = await Question.aggregate([
       { $match: { author: user._id } },
-      {
-        $group: {
-          _id: null,
-          totalViews: { $sum: "$views" },
-        },
-      },
+      { $group: { _id: null, totalViews: { $sum: "$views" } } },
     ]);
 
     const criteria = [
@@ -317,15 +284,15 @@ export async function getUserInfo(params: GetUserByIdParams) {
       { type: "ANSWER_COUNT" as BadgeCriteriaType, count: totalAnswers },
       {
         type: "QUESTION_UPVOTES" as BadgeCriteriaType,
-        count: questionUpvotes?.totalUpvotes || 0,
+        count: questionUpvotes.totalUpvotes,
       },
       {
         type: "ANSWER_UPVOTES" as BadgeCriteriaType,
-        count: answerUpvotes?.totalUpvotes || 0,
+        count: answerUpvotes.totalUpvotes,
       },
       {
         type: "TOTAL_VIEWS" as BadgeCriteriaType,
-        count: questionViews?.totalViews || 0,
+        count: questionViews.totalViews,
       },
     ];
 
@@ -339,7 +306,7 @@ export async function getUserInfo(params: GetUserByIdParams) {
       reputation: user.reputation,
     };
   } catch (error) {
-    console.log(error);
+    console.error(error);
     throw error;
   }
 }
