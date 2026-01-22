@@ -3,7 +3,6 @@ import { SearchParamsProps } from "@/types";
 import AnswerCard from "../cards/AnswerCard";
 import Pagination from "./Pagination";
 import { Suspense } from "react";
-import Answer from "@/database/answer.model";
 
 interface Props extends SearchParamsProps {
   userId: string;
@@ -16,7 +15,7 @@ const AnswersTab = async ({ searchParams, userId, currentUserId }: Props) => {
     userId,
     page: Number(page),
   });
-  console.log("userAnswers: ", result);
+  // console.log("userAnswers: ", result);
   return (
     <>
       {result.answers.map((answer) => (

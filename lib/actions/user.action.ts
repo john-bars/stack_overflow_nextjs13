@@ -19,7 +19,6 @@ import Tag from "@/database/tag.model";
 import Answer from "@/database/answer.model";
 import { BadgeCriteriaType } from "@/types";
 import { assignBadges } from "../utils";
-import Question from "@/database/question.model";
 
 // get the user with a clerkId equall to userId
 export async function getUserById(params: any) {
@@ -27,7 +26,7 @@ export async function getUserById(params: any) {
     connectToDatabase();
     const { userId } = params;
 
-    const user = await User.findOne({ clerkId: userId });
+    const user = await User.findOne({ _id: userId });
 
     return user;
   } catch (error) {
@@ -52,8 +51,8 @@ export async function createUser(userData: CreateUserParams) {
 export async function updateUser(params: UpdateUserParams) {
   try {
     connectToDatabase();
-    const { clerkId, updateData, path } = params;
-    await User.findOneAndUpdate({ clerkId }, updateData, { new: true });
+    const { userId, updateData, path } = params;
+    await User.findOneAndUpdate({ userId }, updateData, { new: true });
 
     revalidatePath(path);
   } catch (error) {
@@ -255,7 +254,7 @@ export async function getUserInfo(params: GetUserByIdParams) {
     const { userId } = params;
 
     // Lookup by NextAuth user ID
-    const user = await User.findOne({ id: userId });
+    const user = await User.findOne({ _id: userId });
 
     if (!user) throw new Error("User not found");
 

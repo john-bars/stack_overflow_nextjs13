@@ -20,7 +20,6 @@ const Page = async ({ searchParams }: SearchParamsProps) => {
     filter,
     page: Number(page),
   });
-  // console.log(result);
 
   return (
     <>
@@ -47,7 +46,18 @@ const Page = async ({ searchParams }: SearchParamsProps) => {
 
       <section className="mt-12 flex flex-wrap gap-4">
         {result.users.length > 0 ? (
-          result.users.map((user) => <UserCard key={user._id} user={user} />)
+          result.users.map((user) => (
+            <UserCard
+              key={user._id}
+              user={{
+                _id: user._id.toString(),
+                name: user.name,
+                username: user.username,
+                email: user.email,
+                picture: user.picture,
+              }}
+            />
+          ))
         ) : (
           <div className="paragraph-regular text-dark200_light800 mx-auto max-w-4xl text-center">
             <p>No users yet</p>

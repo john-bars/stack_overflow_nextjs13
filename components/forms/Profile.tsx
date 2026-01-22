@@ -22,17 +22,26 @@ import { updateUser } from "@/lib/actions/user.action";
 import { toast } from "../ui/use-toast";
 import { ToastAction } from "../ui/toast";
 
+interface User {
+  _id: string;
+  name: string;
+  username: string;
+  portfolioWebsite?: string;
+  location?: string;
+  bio?: string;
+}
+
 interface Props {
-  clerkId: string;
-  user: string;
+  userId: string;
+  user: User;
 }
 
 interface FormFieldProps {
   control: any;
-  name: string;
+  name: keyof User | "portfolioWebsite" | "location" | "bio";
   label: string;
   placeholder: string;
-  type?: "text" | "url" | "textarea" | undefined;
+  type?: "text" | "url" | "textarea";
 }
 
 const CustomFormField: React.FC<FormFieldProps> = ({
@@ -76,8 +85,7 @@ const CustomFormField: React.FC<FormFieldProps> = ({
 );
 
 // Use the CustomFormField component in your Profile component
-const Profile = ({ clerkId, user }: Props) => {
-  const parsedUser = JSON.parse(user);
+const Profile: React.FC<Props> = ({ userId, user }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
@@ -86,11 +94,11 @@ const Profile = ({ clerkId, user }: Props) => {
   const form = useForm<z.infer<typeof ProfileSchema>>({
     resolver: zodResolver(ProfileSchema),
     defaultValues: {
-      name: parsedUser.name || "",
-      username: parsedUser.username || "",
-      portfolioWebsite: parsedUser.portfolioWebsite || "",
-      location: parsedUser.location || "",
-      bio: parsedUser.bio || "",
+      name: user.name ?? "",
+      username: user.username ?? "",
+      portfolioWebsite: user.portfolioWebsite ?? "",
+      location: user.location ?? "",
+      bio: user.bio ?? "",
     },
   });
 
@@ -99,12 +107,9 @@ const Profile = ({ clerkId, user }: Props) => {
     setIsSubmitting(true);
 
     try {
-      const { name, username, portfolioWebsite, location, bio } = values;
-
-      //   update the user
       await updateUser({
-        clerkId,
-        updateData: { name, username, portfolioWebsite, location, bio },
+        userId,
+        updateData: values,
         path: pathname,
       });
 

@@ -27,7 +27,6 @@ const AnswerCard = ({
   upvotes,
   createdAt,
 }: Props) => {
-  console.log("author: ", author);
   const showActionButtons = currentUserId && currentUserId === author._id;
 
   return (

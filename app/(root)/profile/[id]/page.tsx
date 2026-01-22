@@ -9,18 +9,19 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getUserInfo } from "@/lib/actions/user.action";
 import { getJoinedDate } from "@/lib/utils";
 import { URLProps } from "@/types";
-import { SignedIn } from "@clerk/nextjs";
 
 import { getServerSession } from "next-auth";
 import Image from "next/image";
 import Link from "next/link";
-import { userInfo } from "os";
 
 const Page = async ({ params, searchParams }: URLProps) => {
   const session = await getServerSession(authOptions);
   const userId = session?.user?.id;
   const { id } = await params;
   const userInfo = await getUserInfo({ userId: id });
+
+  const profileUser = userInfo.user;
+  const isOwner = userId === profileUser._id;
 
   return (
     <>
@@ -72,7 +73,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
         </div>
 
         <div className="absolute right-0 top-0">
-          {userId === userInfo.user._id && (
+          {isOwner && (
             <Link href="/profile/edit">
               <Button className="paragraph-medium btn-secondary text-dark300_light900 min-h-[46px] min-w-[140px] px-4 py-3 sm:min-w-[175px]">
                 Edit Profile
